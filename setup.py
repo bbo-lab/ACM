@@ -26,5 +26,5 @@ setup(
     ],
     packages=['ACM'],
     include_package_data=True,
-    install_requires=["numpy", "pytorch"],
+    install_requires=["numpy", "torch", 'scipy', 'argparse'],
 )
