@@ -40,6 +40,7 @@ A dataset input config consists of a folder with the following files:
 
 A dataset output consists of a folder with the following files:
 
+- `pose.npy`: ...
 - `save_dict.npy`: ...
 - `x_calib.npy`: ...
 - `x_ini.npy`: ...
@@ -82,6 +83,11 @@ Whatever structure this file has
 ```
 
 ### File structure outputs
+#### pose.npy
+```
+Whatever structure this file has
+```
+
 #### save_dict.npy
 ```
 Whatever structure this file has
