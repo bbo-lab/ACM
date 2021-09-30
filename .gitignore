@@ -130,3 +130,5 @@ dmypy.json
 
 required_files/
 datasets/
+
+*.kate-swp
