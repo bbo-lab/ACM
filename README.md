@@ -56,7 +56,7 @@ The model in the format
 Whatever structure this file has
 ```
 
-#### `multicalibration.npy`
+#### multicalibration.npy
 The multicalibration in the format
 ```
 Whatever structure this file has
