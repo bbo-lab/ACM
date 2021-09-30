@@ -4,13 +4,14 @@ import numpy as np
 import sys
 import torch
 
-import anatomy
 import configuration as cfg
-import helper
-import interp_3d
-import model
-import optimization as opt
-import routines_math as rout_m
+
+from . import anatomy
+from . import helper
+from . import interp_3d
+from . import model
+from . import optimization as opt
+from . import routines_math as rout_m
 
 def get_origin_coord(file_origin_coord, scale_factor):
     # load
@@ -168,7 +169,7 @@ def initialize_x(args,
     return x_ini
 
 
-if __name__ == "__main__":
+def main():
     # get arguments
     args = helper.get_arguments(cfg.file_origin_coord, cfg.file_calibration, cfg.file_model, cfg.file_labelsDLC,
                                 cfg.scale_factor, cfg.pcutoff)
@@ -194,6 +195,7 @@ if __name__ == "__main__":
     nFree_markers = args['nFree_markers']
     nFree_pose = args['nFree_pose']
 
+    print(cfg.file_labelsManual)
     # load frame list according to manual labels
     if (cfg.file_labelsManual[-3:] == 'npz'):
         labels_manual = np.load(cfg.file_labelsManual, allow_pickle=True)['arr_0'].item()
@@ -369,3 +371,6 @@ if __name__ == "__main__":
     
     # save
     np.save(cfg.folder_save + '/x_calib.npy', x_calib)
+
+if __name__ == "__main__":
+    main()

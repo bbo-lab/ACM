@@ -2,7 +2,7 @@ from scipy.optimize import minimize
 import time
 import torch
 
-import model
+from . import model
 
 def obj_fcn__wrap(x_free, args): 
     x_free_torch = args['x_free_torch']

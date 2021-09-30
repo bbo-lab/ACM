@@ -6,9 +6,10 @@ import os
 import sys
 import torch
 
-import anatomy
 import configuration as cfg
-import routines_math as rout_m
+
+from . import anatomy
+from . import routines_math as rout_m
 
 def get_calibration(file_origin_coord, file_calibration,
                     scale_factor):

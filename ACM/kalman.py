@@ -2,7 +2,7 @@
 
 import torch
 
-import model
+from . import model
 
 def addition_save(term1, term2):
     return term1 + term2

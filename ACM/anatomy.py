@@ -3,8 +3,9 @@
 import numpy as np
 
 import configuration as cfg
-import helper
-import routines_math as rout_m
+
+from . import helper
+from . import routines_math as rout_m
 
 
 def get_index_bone_start(str, skeleton_edges, joint_order):

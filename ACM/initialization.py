@@ -4,13 +4,14 @@ import numpy as np
 import sys
 import torch
 
-import calibration as calib
 import configuration as cfg
-import helper
-import model
-import optimization as opt
 
-if __name__ == "__main__":
+from . import calibration as calib
+from . import helper
+from . import model
+from . import optimization as opt
+
+def main():
     # get arguments
     args = helper.get_arguments(cfg.file_origin_coord, cfg.file_calibration, cfg.file_model, cfg.file_labelsDLC,
                                 cfg.scale_factor, cfg.pcutoff)
@@ -141,3 +142,6 @@ if __name__ == "__main__":
     
     # save
     np.save(cfg.folder_save + '/x_ini.npy', x_ini)
+
+if __name__ == "__main__":
+    main()

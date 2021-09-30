@@ -4,10 +4,11 @@ import numpy as np
 import torch
 
 import configuration as cfg
-import em
-import helper
-import kalman
-import model
+
+from . import em
+from . import helper
+from . import kalman
+from . import model
 
 def gen_args_Qg(args):
     measure_mask = args['args_kalman']['measure_mask'].cpu().numpy().astype(bool)
@@ -164,7 +165,7 @@ def convert_to_gpu(arg_in):
         arg_out = arg_in
     return arg_out
 
-if __name__ == '__main__':
+def main():
     nT = cfg.nT
     dt = cfg.dt
     use_cuda = cfg.use_cuda
@@ -631,3 +632,6 @@ if __name__ == '__main__':
     pose['marker_positions_3d'] = marker_pos
     pose['joint_positions_3d'] = skel_pos
     np.save('pose.npy', pose)
+
+if __name__ == '__main__':
+    main()

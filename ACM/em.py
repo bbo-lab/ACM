@@ -5,8 +5,9 @@ import numpy as np
 import torch
 
 import configuration as cfg
-import kalman
-import model
+
+from . import kalman
+from . import model
 
 # IMPROVEMENT: put arrays of args_Qg in args
 # IMPROVEMENT: put arrays of the third row in args

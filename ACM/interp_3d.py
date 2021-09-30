@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import minimize
-import routines_math as rout_m
+
+from . import routines_math as rout_m
 
 def find_closest_3d_point(m, n):
     def obj_func(x):
