@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import numpy as np
 import torch
 
@@ -85,11 +86,11 @@ def make_args_torch(args):
             else:
                 args_torch[key] = torch.from_numpy(args[key]).type(model.float_type)
         elif (key_type == type(torch.Tensor([]))):
-            args_torch[key] = args[key].detach()            
+            args_torch[key] = args[key].detach()
         elif ((key_type == type(float())) or (key_type == type(np.float64())) or (key_type == type(np.float32())) or (key_type == type(np.float16()))):
 #             args_torch[key] = float(args[key])
             args_torch[key] = torch.scalar_tensor(args[key], dtype=model.float_type)
-        elif ((key_type == type(int())) or key_type == type(np.int64()) or (key_type == type(np.int32())) or (key_type == type(np.int16()))): 
+        elif ((key_type == type(int())) or key_type == type(np.int64()) or (key_type == type(np.int32())) or (key_type == type(np.int16()))):
 #             args_torch[key] = int(args[key])
             args_torch[key] = torch.scalar_tensor(args[key], dtype=torch.int64)
         elif ((key_type == type(bool())) or (key_type == type(np.bool()))):
@@ -97,7 +98,7 @@ def make_args_torch(args):
         else:
             args_torch[key] = args[key]
     return args_torch
-    
+
 def make_args_gpu(args):
     args_gpu = dict()
     for key in np.sort(list(args.keys())):
@@ -122,7 +123,7 @@ def make_args_gpu(args):
         else:
             args_gpu[key] = args[key]
     return args_gpu
-    
+
 def convert_to_torch(arg_in):
     key_type = type(arg_in)
     if (key_type == type(np.array([]))):
@@ -135,7 +136,7 @@ def convert_to_torch(arg_in):
     elif ((key_type == type(float())) or (key_type == type(np.float64())) or (key_type == type(np.float32())) or (key_type == type(np.float16()))):
 #         arg_out = float(arg_in)
         arg_out = torch.scalar_tensor(arg_in, dtype=model.float_type)
-    elif ((key_type == type(int())) or (key_type == type(np.int32())) or (key_type == type(np.int16()))): 
+    elif ((key_type == type(int())) or (key_type == type(np.int32())) or (key_type == type(np.int16()))):
 #         arg_out = int(arg_in)
         arg_out = torch.scalar_tensor(arg_in, dtype=torch.int64)
     elif ((key_type == type(bool())) or (key_type == type(np.bool()))):
@@ -156,7 +157,7 @@ def convert_to_gpu(arg_in):
     elif ((key_type == type(float())) or (key_type == type(np.float64())) or (key_type == type(np.float32())) or (key_type == type(np.float16()))):
 #         arg_out = float(arg_in)
         arg_out = torch.scalar_tensor(arg_in, dtype=model.float_type).cuda()
-    elif ((key_type == type(int())) or key_type == type(np.int64()) or (key_type == type(np.int32())) or (key_type == type(np.int16()))): 
+    elif ((key_type == type(int())) or key_type == type(np.int64()) or (key_type == type(np.int32())) or (key_type == type(np.int16()))):
 #         arg_out = int(arg_in)
         arg_out = torch.scalar_tensor(arg_in, dtype=torch.int64).cuda() # FIXME: determine int type?
     elif ((key_type == type(bool())) or (key_type == type(np.bool()))):
@@ -182,11 +183,11 @@ def main():
                                cfg.dt,
                                dtype=np.int64)
 
-    # get arguments    
+    # get arguments
     args_model = helper.get_arguments(cfg.file_origin_coord, cfg.file_calibration, cfg.file_model, cfg.file_labelsDLC,
                                       cfg.scale_factor, cfg.pcutoff)
     args_model['use_custom_clip'] = True
-    
+
     # numbers
     nMarkers = args_model['numbers']['nMarkers']
     nCameras = args_model['numbers']['nCameras']
@@ -208,18 +209,18 @@ def main():
     args_model['free_para_markers'] = torch.from_numpy(free_para_markers)
     args_model['nFree_bones'] = nFree_bones
     args_model['nFree_markers'] = nFree_markers
-    
+
     # create correct free_para
     free_para = np.concatenate([free_para_bones,
                                 free_para_markers,
                                 free_para_pose], 0)
-    
-    
+
+
     # dim_z / dim_x
     dim_z = int(np.sum(free_para))
     dim_z2 = 2 * dim_z
     dim_x = nCameras * nMarkers * 2
-    
+
     # measure / measure_mask
     measure = args_model['labels'][frame_list_fit].clone()
     measure_mask = args_model['labels_mask'][frame_list_fit].clone()
@@ -246,7 +247,7 @@ def main():
 #     measure_mask_outer = torch.zeros((dim_x, dim_x), dtype=torch.bool)
     #
     nMeasure = torch.sum(measure_mask)
-    
+
     # get number of free parameters
     nFree_mu0 = int(dim_z)
     nFree_var0 = int((dim_z**2+dim_z)/2)
@@ -275,16 +276,16 @@ def main():
     # initialize args regarding x
     args_model['x_torch'] = torch.from_numpy(mu_ini).type(model.float_type)
     args_model['x_free_torch'] = torch.from_numpy(mu_ini[free_para]).type(model.float_type)
-    
+
     # set initial values for the model parameters
     mu0 = model.do_normalization(torch.from_numpy(mu_ini[free_para][None, :]), args_model)[0].numpy()
     var0 = np.identity(dim_z, dtype=np.float64) * cfg.noise
     A = np.identity(dim_z, dtype=np.float64)
     var_f = np.identity(dim_z, dtype=np.float64) * cfg.noise
     var_g = np.identity(dim_x, dtype=np.float64) * cfg.noise
-    
+
     #
-    mu0 = torch.from_numpy(mu0).type(model.float_type)    
+    mu0 = torch.from_numpy(mu0).type(model.float_type)
     var0 = torch.from_numpy(var0).type(model.float_type)
     A = torch.from_numpy(A).type(model.float_type)
     var_f = torch.from_numpy(var_f).type(model.float_type)
@@ -302,7 +303,7 @@ def main():
         nSigmaPoints = int(rand_fac * 2*dim_z**2) + 1 # should be uneven
         nSigmaPoints2 = int(rand_fac * 2*dim_z2**2) + 1 # should be uneven
 
-    
+
     # set
     w_m = np.full(nSigmaPoints, 0.0, dtype=np.float64)
     w_c = np.full(nSigmaPoints, 0.0, dtype=np.float64)
@@ -323,8 +324,8 @@ def main():
     w_c2[1:] = 1.0 / (2.0 * (dim_z2 + lamb2))
     sqrt_dimZ_p_lamb = np.sqrt(dim_z + lamb)
     sqrt_dimZ_p_lamb2 = np.sqrt(dim_z2 + lamb2)
-    
-    
+
+
     # for ukf5 (w1 = 2**0.5 * w2)
     if (sigma_point_scheme == 5):
         print('ATTENTION: USING UKF5')
@@ -346,7 +347,7 @@ def main():
         w_c2 = np.copy(w_m2)
         sqrt_dimZ_p_lamb = np.sqrt(dim_z / (1.0 - 1.0/(2*dim_z + 1))) / 2**0.5
         sqrt_dimZ_p_lamb2 = np.sqrt(dim_z2 / (1.0 - 1.0/(2*dim_z2 + 1))) / 2**0.5
-    
+
     #
     w_m = torch.from_numpy(w_m).type(model.float_type)
     w_c = torch.from_numpy(w_c).type(model.float_type)
@@ -380,14 +381,14 @@ def main():
     print('nFree (total):\t{:06d}'.format(nFree))
     print('nMeasure:\t{:06d}'.format(nMeasure))
     print()
-    
+
     if ((abs(float(torch.sum(w_m)) - 1.0) >= 2**-23) or (abs(float(torch.sum(w_m2)) - 1.0) >= 2**-23)):
         print('ERROR: w_m or w_m2 does not add up to 1.0')
         raise
     if ((abs(float(torch.sum(w_c)) - 1.0) >= 2**-23) or (abs(float(torch.sum(w_c2)) - 1.0) >= 2**-23)):
         print('ERROR: w_c or w_c2 does not add up to 1.0')
         raise
-    
+
     # kalman / em
     args_kalman = dict()
     #
@@ -431,7 +432,7 @@ def main():
     #
     if slow_mode:
         args_kalman['outer_z'] = torch.zeros((dim_z, dim_z), dtype=model.float_type)
-        args_kalman['var_pairwise'] = torch.zeros((dim_z2, dim_z2), dtype=model.float_type)  
+        args_kalman['var_pairwise'] = torch.zeros((dim_z2, dim_z2), dtype=model.float_type)
         args_kalman['mu_pairwise'] = torch.zeros(dim_z2, dtype=model.float_type)
         args_kalman['sigma_points'] = torch.zeros((nSigmaPoints, dim_z), dtype=model.float_type) # for em
         args_kalman['sigma_points_g'] = torch.zeros((nSigmaPoints, dim_x), dtype=model.float_type) # for em
@@ -439,7 +440,7 @@ def main():
         args_kalman['x1_m_fx0'] = torch.zeros((nSigmaPoints2, dim_z), dtype=model.float_type) # for em
     else:
         args_kalman['outer_z'] = torch.zeros((nT, dim_z, dim_z), dtype=model.float_type)
-        args_kalman['var_pairwise'] = torch.zeros((nT, dim_z2, dim_z2), dtype=model.float_type)  
+        args_kalman['var_pairwise'] = torch.zeros((nT, dim_z2, dim_z2), dtype=model.float_type)
         args_kalman['mu_pairwise'] = torch.zeros((nT, dim_z2), dtype=model.float_type)
         args_kalman['sigma_points'] = torch.zeros((nT, nSigmaPoints, dim_z), dtype=model.float_type) # for em
         args_kalman['sigma_points_g'] = torch.zeros((nT, nSigmaPoints, dim_x), dtype=model.float_type) # for em
@@ -449,17 +450,17 @@ def main():
     args_kalman['measurement_expectation1'] = torch.zeros((nT, dim_x), dtype=model.float_type) # for em
     args_kalman['y1_m_hx1_2'] = torch.zeros((nT, dim_x), dtype=model.float_type)# for em
 
-    
+
     # all
     args = dict()
     args['use_cuda'] = False
-    
+
     # plot
     args_model['plot'] = False
     #
     args['args_model'] = args_model
     args['args_kalman'] = args_kalman
-    
+
     # args_Q
     args_Qg = gen_args_Qg(args)
     args_Qg = make_args_torch(args_Qg)
@@ -559,7 +560,7 @@ def main():
         #
         args_kalman_gpu['sigmaPoints_kalman'] = convert_to_gpu(args_kalman['sigmaPoints_kalman'])
         args_kalman_gpu['mu_kalman'] = convert_to_gpu(args_kalman['mu_kalman'])
-        args_kalman_gpu['var_kalman'] = convert_to_gpu(args_kalman['var_kalman'])    
+        args_kalman_gpu['var_kalman'] = convert_to_gpu(args_kalman['var_kalman'])
         args_kalman_gpu['G_kalman'] = convert_to_gpu(args_kalman['G_kalman'])
         args_kalman_gpu['var_p2_ukf'] = convert_to_gpu(args_kalman['var_p2_ukf'])
         args_kalman_gpu['var_p31_ukf'] = convert_to_gpu(args_kalman['var_p31_ukf'])
@@ -577,7 +578,7 @@ def main():
         args_kalman_gpu['measurement_expectation0'] = convert_to_gpu(args_kalman['measurement_expectation0']) # for em
         args_kalman_gpu['measurement_expectation1'] = convert_to_gpu(args_kalman['measurement_expectation1']) # for em
         args_kalman_gpu['outer_z'] = convert_to_gpu(args_kalman['outer_z'])
-        args_kalman_gpu['var_pairwise'] = convert_to_gpu(args_kalman['var_pairwise'])  
+        args_kalman_gpu['var_pairwise'] = convert_to_gpu(args_kalman['var_pairwise'])
         args_kalman_gpu['mu_pairwise'] = convert_to_gpu(args_kalman['mu_pairwise'])
         args_kalman_gpu['sigma_points'] = convert_to_gpu(args_kalman['sigma_points']) # for em
         args_kalman_gpu['sigma_points_g'] = convert_to_gpu(args_kalman['sigma_points_g']) # for em
@@ -596,7 +597,7 @@ def main():
         A = A.cuda()
         var_f = var_f.cuda()
         var_g = var_g.cuda()
-    
+
     # to run EM algorithm
     mu0_ini = mu0.clone()
     var0_ini = var0.clone()
@@ -611,16 +612,16 @@ def main():
         mu0, var0, A, var_f, var_g = em.run(mu0_ini, var0_ini, A_ini, var_f_ini, var_g_ini,
                                             args)
         mu_uks, var_uks, _ = kalman.uks(mu0, var0, A, var_f, var_g, args)
-    save_dict = np.load('save_dict.npy', allow_pickle=True).item()
-    save_dict['mu0'] = mu0.detach().cpu().numpy() 
-    save_dict['var0'] = var0.detach().cpu().numpy() 
-    save_dict['A'] = A.detach().cpu().numpy() 
-    save_dict['var_f'] = var_f.detach().cpu().numpy() 
-    save_dict['var_g'] = var_g.detach().cpu().numpy() 
-    save_dict['mu_uks'] = mu_uks.detach().cpu().numpy() 
-    save_dict['var_uks'] = var_uks.detach().cpu().numpy() 
-    np.save('save_dict.npy', save_dict)
-    
+    save_dict = np.load(os.path.join(cfg.folder_save,'save_dict.npy'), allow_pickle=True).item()
+    save_dict['mu0'] = mu0.detach().cpu().numpy()
+    save_dict['var0'] = var0.detach().cpu().numpy()
+    save_dict['A'] = A.detach().cpu().numpy()
+    save_dict['var_f'] = var_f.detach().cpu().numpy()
+    save_dict['var_g'] = var_g.detach().cpu().numpy()
+    save_dict['mu_uks'] = mu_uks.detach().cpu().numpy()
+    save_dict['var_uks'] = var_uks.detach().cpu().numpy()
+    np.save(os.path.join(cfg.folder_save,'save_dict.npy'), save_dict)
+
     # to get 3D joint & marker locations
     args['args_model']['plot'] = True
     marker_proj, marker_pos, skel_pos = model.fcn_emission_free(mu_uks[1:], args['args_model'])
@@ -631,7 +632,7 @@ def main():
     pose['marker_positions_2d'] = marker_proj
     pose['marker_positions_3d'] = marker_pos
     pose['joint_positions_3d'] = skel_pos
-    np.save('pose.npy', pose)
+    np.save(os.path.join(cfg.folder_save,'pose.npy'), pose)
 
 if __name__ == '__main__':
     main()

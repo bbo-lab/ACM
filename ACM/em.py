@@ -3,6 +3,7 @@
 import math
 import numpy as np
 import torch
+import os
 
 import configuration as cfg
 
@@ -396,5 +397,5 @@ def run(mu0_in, var0_in, A_in, var_f_in, var_g_in,
             save_dict['cond'] = cond
             save_dict['iter_out'] = iter_out
             #
-            np.save('save_dict.npy', save_dict)
+            np.save(os.path.join(cfg.folder_save,'save_dict.npy'), save_dict)
     return mu0_1, var0_1, A_1, var_f_1, var_g_1
