@@ -3,6 +3,7 @@
 import os
 import numpy as np
 import torch
+from scipy.io import savemat
 
 import configuration as cfg
 
@@ -632,7 +633,11 @@ def main():
     pose['marker_positions_2d'] = marker_proj
     pose['marker_positions_3d'] = marker_pos
     pose['joint_positions_3d'] = skel_pos
-    np.save(os.path.join(cfg.folder_save,'pose.npy'), pose)
+
+    posepath = os.path.join(cfg.folder_save,'pose')
+    print(f'Saving pose to {posepath}')
+    np.save(posepath+'.npy', pose)
+    savemat(posepath+'.mat', pose)
 
 if __name__ == '__main__':
     main()

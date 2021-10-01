@@ -2,22 +2,33 @@
 import argparse
 import os
 import sys
+from pprint import pprint
 
 def main():
+    # Parse inputs
     parser = argparse.ArgumentParser(description="ACM (Anatomically-constrained model) - a framework for videography based pose tracking of rodents")
     parser.add_argument('INPUT_PATH', type=str, help="Directory with job configuration")
+    parser.add_argument('--viewer', required=False, help="Load viewer instead of tracking pose", action="store_true")
     args = parser.parse_args()
-
     input_path = os.path.expanduser(args.INPUT_PATH)
-    print(f'Processing {input_path} ...')
-    sys.path.insert(0,input_path)
 
+    # Load config
     # TODO change config system, e.g. pass around a dictionary instead of importing the config everywhere, requiring the sys.path.insert
+    sys.path.insert(0,input_path)
+    print(f'LLoading {input_path} ...')
+
+    if args.viewer:
+        viewer()
+    else:
+        track()
+
+def track():
     import configuration as cfg
 
     from . import calibration
     from . import initialization
     from . import em_run
+
 
     print(f'Saving to {cfg.folder_save}')
 
@@ -51,6 +62,21 @@ def main():
         else:
             print('ERROR: Please choose mode 4')
 
+def viewer():
+    config = get_config_dict()
+
+    from .gui import viewer
+    viewer.start(config)
+
+def get_config_dict():
+    import configuration as cfg
+
+    config = vars(cfg)
+    for k in list(config.keys()):
+        if k.startswith('__'):
+            del config[k]
+
+    return config
 
 if __name__ == "__main__":
     main()
