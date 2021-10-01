@@ -4,7 +4,7 @@ import os
 import sys
 
 def main():
-    parser = argparse.ArgumentParser(description="ACM (Anatomically-constrained model) - a framework for for videography based pose tracking of rodents")
+    parser = argparse.ArgumentParser(description="ACM (Anatomically-constrained model) - a framework for videography based pose tracking of rodents")
     parser.add_argument('INPUT_PATH', type=str, help="Directory with job configuration")
     args = parser.parse_args()
 
@@ -12,6 +12,7 @@ def main():
     print(f'Processing {input_path} ...')
     sys.path.insert(0,input_path)
 
+    # TODO change config system, e.g. pass around a dictionary instead of importing the config everywhere, requiring the sys.path.insert
     import configuration as cfg
 
     from . import calibration
@@ -36,8 +37,7 @@ def main():
     else:
         # create target save folder
         os.makedirs(cfg.folder_save)
-        # create target save folder
-        os.makedirs(cfg.folder_save + '/evaluation')
+        #os.makedirs(cfg.folder_save + '/evaluation')
 
     if (run_pose):
         # calibrate
