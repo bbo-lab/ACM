@@ -7,10 +7,11 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
 import imageio
+from ccvtools import rawio
+
 import numpy as np
 import torch
 
-from ccvtools import rawio
 from ..model import map_m
 from ..helper import get_calibration
 
