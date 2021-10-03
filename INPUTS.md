@@ -3,27 +3,79 @@
 For standard input and output structure and options, only the start and end frame indices of automatic 2d detection and desired output need to be specified.
 **<-- This is probably not true, as there is e.g. a field body_weight. Please expand!**
 
-#### model.npz
+#### model.npy
 
 The model in the format
 ```
-Whatever structure this file has
+dict(
+    'surface_vertices':,
+    'surface_triangles':,
+    'skeleton_vertices':,
+    'skeleton_edges':,
+    'bone_lengths':,
+    'coord0':,
+    'skeleton_coords':,
+    'skeleton_coords_index':,
+    'surface_vertices_weights':,
+    'skeleton_vertices_links':,
+    'joint_marker_vectors':,
+    'joint_marker_distances':,
+    'joint_order':,
+    'joint_marker_index':,
+    'joint_marker_order':,
 ```
 
 #### multicalibration.npy
 
 The multicalibration in the format
 ```
-Whatever structure this file has
+dict(
+    'recFileNames':,
+    'headers':,
+    'nCameras':,
+    'nFrames':,
+    'boardWidth':,
+    'boardHeight':,
+    'mask_multi':,
+    'indexRefCam':,
+    'calib':,
+    'mask_single':,
+    'calib_single':,
+    'mask_all':,
+    'x0_all':,
+    'free_para_all':,
+    'tolerance':,
+    'message':,
+    'convergence':,
+    'x_all_fit':,
+    'rX1_fit':,
+    'RX1_fit':,
+    'tX1_fit':,
+    'k_fit':,
+    'A_fit':,
+    'r1_fit':,
+    'R1_fit':,
+    't1_fit':,
+    'r1_single_fit':,
+    'R1_single_fit':,
+    't1_single_fit'':,
+)
 ```
+TODO: Mark/limit to actually necessary fields, to make it possible to build such a file with other software than ours.
 A multicam calibration in this format can be produced with our calibration software [calibcam](https://github.com/bbo-lab/calibcam), using charuco boards.
 
-#### origin_coord.npz
+#### origin_coord.npy
 
-Calibrations produced by [calibcam](https://github.com/bbo-lab/calibcam) are aligned based on the camera 1 position and direction. origin_coord determines the coordinate system of the final result, relative to the coordinate system of the camera calibration. This usually has the arena center as origin and te z axis pointing upwards.
+Calibrations produced by [calibcam](https://github.com/bbo-lab/calibcam) are aligned based on the camera 1 position and direction. origin_coord determines the coordinate system of the final result, relative to the coordinate system of the camera calibration. This usually has the arena center as origin and the z axis pointing upwards.
 ```
-Whatever structure this file has
+dict(
+    # origin of arena system in the coordinate system of the multicalibration
+    'origin': np.ndarray, shape=(3,), dtype('float64'),
+    # orientation [lateral1, lateral2, up] of arena system in the coordinate system of the multicalibration
+    'coord':, np.ndarray, shape=(3,3), dtype('float64'),
+)
 ```
+Thus, `origin_coord:coord * x_arena + origin_coord:origin = x_camera`.
 
 #### labels_manual.npz
 
