@@ -4,12 +4,9 @@ By Arne Monsees.
 
 ## Installation
 
-### Linux
-(Note: Windows support is planned, but currently not present.)
-
-1. [Install Anaconda](https://docs.anaconda.com/anaconda/install/linux/)
+1. [Install Anaconda](https://docs.anaconda.com/anaconda/install/)
 2. Clone https://github.com/bbo-lab/ACM.git 
-3. Start Anaconda Prompt and navigate into repository directory.
+3. Start Anaconda Prompt (Windows) / terminal (linux) and navigate into repository directory.
 4. Create conda environment `conda env create -f environment.yml` (`-f https://raw.githubusercontent.com/bbo-lab/ACM/main/environment.yml` once repo is public)
 6. Install using `pip install .`
 
