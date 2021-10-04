@@ -15,7 +15,7 @@ By Arne Monsees.
 1. Download [example dataset](https://www.dropbox.com/sh/040587pwx5t7uh3/AAAI5MVilFrJY-mEPr97uADNa?dl=0).
 2. Activate conda environment `conda activate bbo_acm`.
 3. View 2d labels by running `python -m ACM --viewer [Path of "table_1_20210511" folder from step 1.]`
-4. Run `python -m ACM [Path of "table_1_20210511" folder from step 1.]` (expected to take around 20 mins on modern 8-core CPU - preliminary number from notebook with an AMD Ryzen 7 PRO 5850U, using the iGPU, so probaably notably faster on GPU workstation).
+4. Run `python -m ACM [Path of "table_1_20210511" folder from step 1.]` (expected to take around 20 mins on modern 8-core CPU, tested with an AMD Vega iGPU and a Geforce GTX 1080 Ti).
 5. View 3d tracked pose by running `python -m ACM --viewer [Path of "table_1_20210511" folder from step 1.]`
 
 ## Setting up your own dataset config
