@@ -30,8 +30,8 @@ A dataset input config consists of a folder with the following files:
 - `model.npz`: ...
 - `multicalibration.npy`: ...
 - `origin_coord.npy`: Coordinate system of the final result, relative to the coordinate system of the camera calibration
-- `labels_manual.npz`: Manual labels on the videography data
 - `labels_dlc_n_m.npy`: Automatically detected labels on the videography data
+- `labels_manual.npz`: Manual labels on the videography data **TODO add explanation what these are used for compared to auto-detected labels**
 
 #### Output
 
