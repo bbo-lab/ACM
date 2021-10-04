@@ -9,9 +9,9 @@ By Arne Monsees.
 
 1. [Install Anaconda](https://docs.anaconda.com/anaconda/install/linux/)
 2. Clone https://github.com/bbo-lab/ACM.git 
-3. Create conda environment `conda env create -f https://raw.githubusercontent.com/bbo-lab/ACM/main/environment.yml`
-4. Navigate into the ACM repository
-5. Install using `pip install .`
+3. Start Anaconda Prompt and navigate into repository directory.
+4. Create conda environment `conda env create -f environment.yml` (`-f https://raw.githubusercontent.com/bbo-lab/ACM/main/environment.yml` once repo is public)
+6. Install using `pip install .`
 
 ## Testing
 
