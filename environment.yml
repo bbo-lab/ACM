@@ -9,6 +9,7 @@ dependencies:
   - pytorch=1.9.0
   - imageio
   - matplotlib
+  - pip
   - pip:
     - argparse
     - pyqt5
