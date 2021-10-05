@@ -370,7 +370,7 @@ def main():
     x_calib[free_para] = x_fit_free
     
     # save
-    np.save(cfg.folder_save + '/x_calib.npy', x_calib)
+    np.save(cfg.folder_calib + '/x_calib.npy', x_calib)
 
 if __name__ == "__main__":
     main()

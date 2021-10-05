@@ -249,7 +249,7 @@ class Viewer(QMainWindow):
         #dialogOptions |= vidDlg.DontUseNativeDialog
         videoFiles, _ = QFileDialog.getOpenFileNames(vidDlg,
             "Choose video files",
-            self.config['config_path'],
+            self.config['folder_project'],
             "video files (*.*)",
             options=dialogOptions)
 

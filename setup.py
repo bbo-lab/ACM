@@ -6,10 +6,12 @@ HERE = pathlib.Path(__file__).parent
 # The text of the README file
 README = (HERE / "README.md").read_text()
 
+VERSION = "0.2.1"
+
 # This call to setup() does all the work
 setup(
     name="bbo-acm",
-    version="0.2.1",
+    version=VERSION,
     description="Anatomically constraint pose reconstruction from video data",
     long_description=README,
     long_description_content_type="text/markdown",

@@ -9,15 +9,12 @@ dlc_index_frame_end = 184000
 index_frame_start = 45800
 index_frame_end = 46800
 
-assert dlc_index_frame_start<=index_frame_start and dlc_index_frame_end>=index_frame_end, "Requested frame range not in label range."
-
-config_path = os.path.dirname(os.path.realpath(__file__))
-job_name = os.path.basename(config_path)
-job_time = datetime.now()
-
-# define location of base folder
-folder_project = config_path # make this the location of this file
-folder_reqFiles = folder_project
+# MODE
+# 1: deterministic model
+# 2: deterministic model + joint angle limits
+# 3: probabilistic model
+# 4: probabilistic model + joint angle limits
+mode = 4 # should always be 4 for now
 
 # probability cutoff (labels with a smaller probability than pcutoff are not used for the pose reconstruction)
 pcutoff = 0.9
@@ -26,22 +23,8 @@ slope = 1.0
 # initial values of the covariance matrices' diagonal entries
 noise = 1e-4
 
-# MODE
-# 1: deterministic model
-# 2: deterministic model + joint angle limits
-# 3: probabilistic model
-# 4: probabilistic model + joint angle limits
-mode = 4 # should always be 4 for now
-
-# folder to save pose reconstruction to
-folder_save = os.path.join(folder_project, 'results', f'{job_name}_{job_time.strftime("%Y%m%d-%H%M%S")}')
-
-# define location of all needed files
-file_origin_coord = os.path.realpath(os.path.join(folder_reqFiles, 'origin_coord.npy'))
-file_calibration = os.path.realpath(os.path.join(folder_reqFiles, 'multicalibration.npy'))
-file_model = os.path.realpath(os.path.join(folder_reqFiles, 'model.npy'))
-file_labelsDLC = os.path.realpath(os.path.join(folder_reqFiles,  f'labels_dlc_{dlc_index_frame_start:06}_{dlc_index_frame_end:06}.npy'))
-file_labelsManual = os.path.realpath(os.path.join(folder_reqFiles, 'labels_manual.npz')) # only needed for calibration
+# videos [optional, for viewer only]
+videos = [ 'cam1_20210511_table_10.ccv.mp4',  'cam2_20210511_table_10.ccv.mp4',  'cam3_20210511_table_10.ccv.mp4',  'cam4_20210511_table_10.ccv.mp4' ]
 
 # camera calibration scaling factor (calibration board square size -> cm) 
 # TODO This should really be in the calibration file
@@ -112,3 +95,29 @@ slow_mode = True # set to True to lower memory requirements (should not be chang
 sigma_point_scheme = 3 # # UKF3: 3, UKF5: 5, naive: 0 (should always be 3)
 tol = 5e-2 # tolerance for convergence 
 iter_max = 100 # maximum number of EM iterations
+
+# ASSERTS
+assert dlc_index_frame_start<=index_frame_start and dlc_index_frame_end>=index_frame_end, "Requested frame range not in label range."
+
+# DEFINE PATHS
+folder_project = os.path.dirname(os.path.realpath(__file__))
+job_name = os.path.basename(folder_project)
+job_time = datetime.now()
+
+# folder to save initialization, calibration and pose reconstruction to
+folder_save = os.path.join(folder_project, 'results', f'{job_name}_{job_time.strftime("%Y%m%d-%H%M%S")}')
+folder_init = folder_save
+folder_calib = folder_save
+
+# add path to video filenames
+videos = [ os.path.join(folder_project,video) for video in videos ]
+
+# define location of base folder
+folder_reqFiles = folder_project
+
+# define location of all needed files
+file_origin_coord = os.path.realpath(os.path.join(folder_reqFiles, 'origin_coord.npy'))
+file_calibration = os.path.realpath(os.path.join(folder_reqFiles, 'multicalibration.npy'))
+file_model = os.path.realpath(os.path.join(folder_reqFiles, 'model.npy'))
+file_labelsDLC = os.path.realpath(os.path.join(folder_reqFiles,  f'labels_dlc_{dlc_index_frame_start:06}_{dlc_index_frame_end:06}.npy'))
+file_labelsManual = os.path.realpath(os.path.join(folder_reqFiles, 'labels_manual.npz')) # only needed for calibration

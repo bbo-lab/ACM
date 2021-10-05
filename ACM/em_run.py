@@ -262,7 +262,7 @@ def main():
 
     # mu0_ini
     # load from ini
-    mu_ini = np.load(cfg.folder_save + '/x_ini.npy', allow_pickle=True)
+    mu_ini = np.load(cfg.folder_init + '/x_ini.npy', allow_pickle=True)
     #
     # ATTENTION: [mu_ini_min <= mu_ini <= mu_ini_max] is enforced in initialization.py
     mu_ini_fac = 0.9

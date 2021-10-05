@@ -52,7 +52,7 @@ def main():
     
     # initialize x_pose
     # load calibrated model and initalize the pose
-    x_calib = np.load(cfg.folder_save + '/x_calib.npy', allow_pickle=True)
+    x_calib = np.load(cfg.folder_calib + '/x_calib.npy', allow_pickle=True)
     x_bones = x_calib[:nPara_bones]
     x_markers = x_calib[nPara_bones:nPara_bones+nPara_markers]
     # load arena coordinate system
@@ -141,7 +141,7 @@ def main():
     x_ini[free_para] = x_fit_free
     
     # save
-    np.save(cfg.folder_save + '/x_ini.npy', x_ini)
+    np.save(cfg.folder_init + '/x_ini.npy', x_ini)
 
 if __name__ == "__main__":
     main()
