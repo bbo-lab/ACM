@@ -33,20 +33,24 @@ def track(args):
     from . import em_run
     
     full_pipline = args.calibration==False and args.initialization==False  and args.poseinference==False
-
-    # calibrate    
+    
     if args.calibration==True or full_pipline:
         check_directory(cfg.folder_calib,'Calibration') or sys.exit(1)
+    if args.initialization==True or full_pipline:
+        check_directory(cfg.folder_init,'Initialization') or sys.exit(1)
+    if args.poseinference==True or full_pipline:
+        check_directory(cfg.folder_save,'Result') or sys.exit(1)
+    
+    # calibrate    
+    if args.calibration==True or full_pipline:
         calibration.main()
 
     # initialize
     if args.initialization==True or full_pipline:
-        check_directory(cfg.folder_init,'Initialization') or sys.exit(1)
         initialization.main()
         
     # run pose reconstruction
     if args.poseinference==True or full_pipline:
-        check_directory(cfg.folder_save,'Result') or sys.exit(1)
         if (cfg.mode == 4):
             # run probabilistic model
             em_run.main()
