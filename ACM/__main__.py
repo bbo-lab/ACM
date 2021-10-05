@@ -77,16 +77,17 @@ def get_config_dict():
 
 
 def check_directory(path,dirtype):
-    if os.path.isdir(path):
-        invalid_input = True
-        while (invalid_input):
-            print(f'{dirtype} folder {path} already exists. Do you want to overwrite the existing folder? [y/n]')
-            input_user = input()
-            if ((input_user == 'Y') or (input_user == 'y')):
-                run_pose = True
-                invalid_input = False
-            elif ((input_user == 'N') or (input_user == 'n')):
-                return False
+    if os.path.isdir(path) :
+        if len(os.listdir(path)) > 0:
+            invalid_input = True
+            while (invalid_input):
+                print(f'{dirtype} folder {path} already exists. Do you want to overwrite the existing folder? [y/n]')
+                input_user = input()
+                if ((input_user == 'Y') or (input_user == 'y')):
+                    run_pose = True
+                    invalid_input = False
+                elif ((input_user == 'N') or (input_user == 'n')):
+                    return False
     else:
         # create target save folder
         os.makedirs(path)
