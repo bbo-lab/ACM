@@ -219,6 +219,7 @@ class Viewer(QMainWindow):
         if resultidx+1 < len(self.results):
             posefile = os.path.join(self.get_config()['folder_project'], 'results', self.results[resultidx], 'pose.npy')
             if os.path.isfile(posefile):
+                model = np.load(os.path.join(self.get_config()['folder_project'],"model.npy"),allow_pickle=True).item()
                 pose = np.load(posefile,allow_pickle=True).item()
                 closestposeidx = np.argmin(np.abs(self.frames-frameidx))
                 joint_positions_3d = pose['joint_positions_3d'][[closestposeidx],:,:]
@@ -228,6 +229,12 @@ class Viewer(QMainWindow):
                                             self.calib['A_fit'],
                                             self.calib['k_fit'],
                                             torch.from_numpy(joint_positions_3d)))
+                
+                for edge in model['skeleton_edges']:
+                    self.ax.plot(joint_positions_2d[:,camidx,edge,0][0],joint_positions_2d[:,camidx,edge,1][0],'r')
+                    print(f"Plotting edge {edge}")
+                    print(joint_positions_2d[:,camidx,edge,1][0])
+                    
 
                 self.ax.plot(joint_positions_2d[:,camidx,:,0],joint_positions_2d[:,camidx,:,1],'r+')
             else:
