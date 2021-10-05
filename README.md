@@ -1,13 +1,13 @@
 # ACM (Anatomically-constrained model)
 A framework for videography based pose tracking of rodents.
-By Arne Monsees.
+By Arne Monsees. [In review]
 
 ## Installation
 
 1. [Install Anaconda](https://docs.anaconda.com/anaconda/install/)
 2. Clone https://github.com/bbo-lab/ACM.git 
 3. Start Anaconda Prompt (Windows) / terminal (linux) and navigate into repository directory.
-4. Create conda environment `conda env create -f environment.yml` (`-f https://raw.githubusercontent.com/bbo-lab/ACM/main/environment.yml` once repo is public)
+4. Create conda environment `conda env create -f https://raw.githubusercontent.com/bbo-lab/ACM/main/environment.yml` once repo is public)
 6. Install using `pip install .`
 
 ## Testing
