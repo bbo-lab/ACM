@@ -132,3 +132,5 @@ required_files/
 datasets/
 
 *.kate-swp
+
+*.ipynb

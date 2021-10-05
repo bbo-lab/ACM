@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="bbo-acm",
-    version="0.2.0",
+    version="0.2.1",
     description="Anatomically constraint pose reconstruction from video data",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -24,7 +24,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    packages=['ACM'],
+    packages=['ACM','ACM.gui'],
     include_package_data=True,
     install_requires=["numpy", "torch", 'scipy', 'argparse'],
 )
