@@ -181,21 +181,22 @@ def adjust_joint_marker_pos2(model_torch,
     
     # SURFACE (optional, not used during optimization)
     if (adjust_surface): # should raise an error for nSigmaPoints != 1 (i.e. does not work then)
-        if ('surface_vertices' in model_torch.keys()):
-            surf_verts = model_torch['surface_vertices']
-            surf_verts_weights = model_torch['surface_vertices_weights']
-            surf_verts_new = torch.zeros_like(surf_verts, dtype=float_type)
-            for i_bone in range(nBones):
-                index_bone_start = skel_edges[i_bone, 0]
-                index_bone_end = skel_edges[i_bone, 1]
-                skel_coords_new_use = skel_coords_new[0, i_bone]
-                mask_surf = (surf_verts_weights[:, index_bone_end] != 0.0)
-                skin_pos_norm = surf_verts[mask_surf] - skel_verts[index_bone_start]
-                skin_pos_new = torch.einsum('ij,bj->bi', (skel_coords_new_use, skin_pos_norm)) + skel_verts_new[0, index_bone_start]
-                surf_verts_new[mask_surf] = surf_verts_new[mask_surf] + surf_verts_weights[mask_surf, index_bone_end][:, None] * skin_pos_new
-        else:
-            skel_coords_new = float('nan')
-            surf_verts_new = float('nan')
+#         if ('surface_vertices' in model_torch.keys()):
+#             surf_verts = model_torch['surface_vertices']
+#             surf_verts_weights = model_torch['surface_vertices_weights']
+#             surf_verts_new = torch.zeros_like(surf_verts, dtype=float_type)
+#             for i_bone in range(nBones):
+#                 index_bone_start = skel_edges[i_bone, 0]
+#                 index_bone_end = skel_edges[i_bone, 1]
+#                 skel_coords_new_use = skel_coords_new[0, i_bone]
+#                 mask_surf = (surf_verts_weights[:, index_bone_end] != 0.0)
+#                 skin_pos_norm = surf_verts[mask_surf] - skel_verts[index_bone_start]
+#                 skin_pos_new = torch.einsum('ij,bj->bi', (skel_coords_new_use, skin_pos_norm)) + skel_verts_new[0, index_bone_start]
+#                 surf_verts_new[mask_surf] = surf_verts_new[mask_surf] + surf_verts_weights[mask_surf, index_bone_end][:, None] * skin_pos_new
+#         else:
+#             skel_coords_new = float('nan')
+#             surf_verts_new = float('nan')
+        surf_verts_new = float('nan')
         return skel_coords_new, skel_verts_new, surf_verts_new, marker_pos_new
     else:
         return marker_pos_new # nSigmaPoints, nMarkers, xy
