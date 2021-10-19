@@ -13,7 +13,9 @@ x_calib[nBones : nBones+3*nMarkers] # relative 3D marker positions
 x_calib[nBones+3*nMarkers : nBones+3*nMarkers+(3*nBones+3)*1] # bone rotations and translation for time point 1
 x_calib[nBones+3*nMarkers+(3*nBones+3)*1 : nBones+3*nMarkers+(3*nBones+3)*2] # bone rotations and translation for time point 2
 x_calib[nBones+3*nMarkers+(3*nBones+3)*2 : nBones+3*nMarkers+(3*nBones+3)*3] # bone rotations and translation for time point 3
-...
+.
+.
+.
 x_calib[nBones+3*nMarkers+(3*nBones+3)*(nFrames_calib-1) : nBones+3*nMarkers+(3*nBones+3)*nFrames_calib] # bone rotations and translation for time point nFrames_calib
 ```
 Note that bone lengths entries for right-sided bones are always zero, as the actual values are copied from the corresponding left-sided bone lengths entries to enforce symmetry.
