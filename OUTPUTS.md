@@ -16,7 +16,7 @@ x_calib[nBones+3*nMarkers+(3*nBones+3)*2 : nBones+3*nMarkers+(3*nBones+3)*3] # b
 ...
 x_calib[nBones+3*nMarkers+(3*nBones+3)*(nFrames_calib-1) : nBones+3*nMarkers+(3*nBones+3)*nFrames_calib] # bone rotations and translation for time point nFrames_calib
 ```
-Note that bone lengths entries for right-sided bones are always zeros, as the actual values are copied from the corresponding left-sided bones to enforce symmetry.
+Note that bone lengths entries for right-sided bones are always zero, as the actual values are copied from the corresponding left-sided bone lengths entries to enforce symmetry.
 
 #### x_ini.npy
 
