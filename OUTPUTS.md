@@ -4,14 +4,31 @@
 
 Learned bone lengths and relative marker positions as well as pose variables (i.e. bone rotations and a translations) for all time points of the sequence, which is used for learning the animal's anatomy. The format is:
 ```
-np.ndarray, shape=(nBones + 3*nMarkers + nFrames_calib*(3*nBones+3),), dtype('float64'),
+np.ndarray, shape=(nBones + 3*nMarkers + (3*nBones+3)*nFrames_calib,), dtype('float64'),
 ```
+Thus, the individual variables are stored in `x_calib.npy` according to:
+```
+x_calib[0 : nBones] # bone lengths
+x_calib[nBones : nBones+3*nMarkers] # relative 3D marker positions
+x_calib[nBones+3*nMarkers : nBones+3*nMarkers+(3*nBones+3)*1] # bone rotations and translation for time point 1
+x_calib[nBones+3*nMarkers+(3*nBones+3)*1 : nBones+3*nMarkers+(3*nBones+3)*2] # bone rotations and translation for time point 2
+x_calib[nBones+3*nMarkers+(3*nBones+3)*2 : nBones+3*nMarkers+(3*nBones+3)*3] # bone rotations and translation for time point 3
+...
+x_calib[nBones+3*nMarkers+(3*nBones+3)*(nFrames_calib-1) : nBones+3*nMarkers+(3*nBones+3)*nFrames_calib] # bone rotations and translation for time point nFrames_calib
+```
+Note that bone lengths entries for right-sided bones are always zeros, as the actual values are copied from the corresponding left-sided bones to enforce symmetry.
 
 #### x_ini.npy
 
 Learned bone lengths and relative marker positions as well as pose variables (i.e. bone rotations and a single translation) for the first time point of the sequence, which should be reconstructed. The format is:
 ```
 np.ndarray, shape=(nBones + 3*nMarkers + 3*nBones+3,), dtype('float64'),
+```
+Thus, the individual variables are stored in `x_ini.npy` according to:
+```
+x_ini[0 : nBones] # bone lengths
+x_ini[nBones : nBones+3*nMarkers] # relative 3D marker positions
+x_ini[nBones+3*nMarkers : nBones+3*nMarkers+(3*nBones+3)] # bone rotations and translation
 ```
 
 #### save_dict.npy
