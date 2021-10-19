@@ -15,7 +15,7 @@ dFrames_calib = 200
 # the start and end frame index of the sequence used for learning the animal's antomy
 index_frames_calib = list([[6900, 44300],])
 ```
-Thus, `dFrames_calib=50` and `index_frames_calib=list([[0,100],])` will result in learning the anatomy on the frames with indicex 0, 50 and 100. These frames need to be manually annotated in `labels_manual.npz`.
+Thus, `dFrames_calib=50` and `index_frames_calib=list([[0,100],])` will result in learning the anatomy on the frames with indices 0, 50 and 100. These frames need to be manually annotated in `labels_manual.npz`.
 
 ###### Initializaiton
 In the initialization step the animal's pose in the first time point of the sequence, which sould be reconstructed, is learnid via gradient descent optimization
