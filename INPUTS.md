@@ -2,10 +2,10 @@
 
 #### configuration.py
 
-# General
+###### General
 For running the example dataset, only the start and end frame indices `index_frame_start` and `index_frame_end` as well as the desired output location `folder_save` need to be specified.
 
-# Calibration
+###### Calibration
 In the calibration step the anatomy of the animal is learned, based on manually annotaded labels. The most important parameters are:
 ```
 # the body weight of the animal in gram
@@ -17,10 +17,10 @@ index_frames_calib = list([[6900, 44300],])
 ```
 Thus, `dFrames_calib=50` and `index_frames_calib=list([[0,100],])` will result in learning the anatomy on the frames with indicex 0, 50 and 100. These frames need to be manually annotated in `labels_manual.npz`.
 
-# Initializaiton
+###### Initializaiton
 In the initialization step the animal's pose in the first time point of the sequence, which sould be reconstructed, is learnid via gradient descent optimization
 
-# Pose reconstruction
+###### Pose reconstruction
 In the final step model parameters are learned via the EM algorithm to allow for effectively reconstructing a sequence with the RTS smoother. The most important parameter is:
 ```
 # the number of frames to skip between time points in the sequence, which sould be reconstructed
