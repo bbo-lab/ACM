@@ -32,6 +32,7 @@ x_ini[0 : nBones] # bone lengths
 x_ini[nBones : nBones+3*nMarkers] # relative 3D marker positions
 x_ini[nBones+3*nMarkers : nBones+3*nMarkers+(3*nBones+3)] # bone rotations and translation
 ```
+Thus, the first `nBones+3*nMarkers` entries of `x_ini.npy` are identical to `x_calib.npy`.
 
 #### save_dict.npy
 
