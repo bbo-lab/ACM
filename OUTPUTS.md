@@ -44,7 +44,7 @@ dict(
     'mu0': np.ndarray, shape=(nLatent,), dtype('float64'),
     # inferred latent variables (inferrence is based on the learned model parameters)
     'mu_uks': np.ndarray, shape=(nFrames+1, nLatent,), dtype('float64'),
-    # learned covariance matrix of the latent variables
+    # learned initial covariance matrix of the latent variables
     'var0': np.ndarray, shape=(nLatent, nLatent,), dtype('float64'),
     # learned covariance matrix of the transition noise
     'var_f': np.ndarray, shape=(nLatent, nLatent,), dtype('float64'),
