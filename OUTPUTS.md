@@ -39,7 +39,7 @@ Learned model parameters as well as resulting latent variables and corresponding
 ```
 dict(
     # learned transition matrix (legacy: this is fixed to the identity matrix) # LEGACY
-    'A': , np.ndarray, shape=(nLatent, nLatent,), dtype('float64'), # LEGACY
+    'A': np.ndarray, shape=(nLatent, nLatent,), dtype('float64'), # LEGACY
     # learned inital state of the latent variables
     'mu0': np.ndarray, shape=(nLatent,), dtype('float64'),
     # inferred latent variables (inferrence is based on the learned model parameters)
