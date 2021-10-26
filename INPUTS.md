@@ -10,9 +10,9 @@ In the calibration step the anatomy of the animal is learned, based on manually 
 ```
 # the body weight of the animal in gram
 body_weight = 72.0
-# the number of frames to skip between time points in the sequence used for learning the animal's antomy
+# the number of frames to skip between time points in the sequence used for learning the animal's anatomy
 dFrames_calib = 200 
-# the start and end frame index of the sequence used for learning the animal's antomy
+# the start and end frame index of the sequence used for learning the animal's anatomy
 index_frames_calib = list([[6900, 44300],])
 ```
 Thus, `dFrames_calib=50` and `index_frames_calib=list([[0,100],])` will result in learning the anatomy on the frames with indices 0, 50 and 100. These frames need to be manually annotated in `labels_manual.npz`.
