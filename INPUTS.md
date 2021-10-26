@@ -17,13 +17,13 @@ index_frames_calib = list([[6900, 44300],])
 ```
 Thus, `dFrames_calib=50` and `index_frames_calib=list([[0,100],])` will result in learning the anatomy on the frames with indices 0, 50 and 100. These frames need to be manually annotated in `labels_manual.npz`.
 
-###### Initializaiton
+###### Initialization
 In the initialization step the animal's pose in the first time point of the sequence, which sould be reconstructed, is learnid via gradient descent optimization
 
 ###### Pose reconstruction
 In the final step model parameters are learned via the EM algorithm to allow for effectively reconstructing a sequence with the RTS smoother. The most important parameter is:
 ```
-# the number of frames to skip between time points in the sequence, which sould be reconstructed
+# the number of frames to skip between time points in the sequence, which should be reconstructed
 dt = 5 
 ```
 
