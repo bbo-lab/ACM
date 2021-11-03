@@ -52,7 +52,7 @@ dict(
     # learned covariance matrix of the measurement noise
     'var_g': np.ndarray, shape=(nMeasurement, nMeasurement,), dtype('float64'),
     # inferred covariance matrices of the latent variables (inferrence is based on the learned model parameters)
-    'var_uks': np.ndarray, shape=(nFrames+1, nMeasurement, nMeasurement,), dtype('float64'),
+    'var_uks': np.ndarray, shape=(nFrames+1, nLatent, nLatent,), dtype('float64'),
 )
 ```
 
