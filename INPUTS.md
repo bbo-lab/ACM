@@ -6,7 +6,7 @@
 For running the example dataset, only the start and end frame indices `index_frame_start` and `index_frame_end` as well as the desired output location `folder_save` need to be specified.
 
 ###### Calibration
-In the calibration step the anatomy of the animal is learned, based on manually annotaded labels. The most important parameters are:
+In the calibration step the anatomy of the animal is learned, based on manually annotated labels. The most important parameters are:
 ```
 # the body weight of the animal in gram
 body_weight = 72.0
@@ -18,7 +18,7 @@ index_frames_calib = list([[6900, 44300],])
 Thus, `dFrames_calib=50` and `index_frames_calib=list([[0,100],])` will result in learning the anatomy on the frames with indices 0, 50 and 100. These frames need to be manually annotated in `labels_manual.npz`.
 
 ###### Initialization
-In the initialization step the animal's pose in the first time point of the sequence, which sould be reconstructed, is learnid via gradient descent optimization
+In the initialization step the animal's pose in the first time point of the sequence, which sould be reconstructed, is learned via gradient descent optimization.
 
 ###### Pose reconstruction
 In the final step model parameters are learned via the EM algorithm to allow for effectively reconstructing a sequence with the RTS smoother. The most important parameter is:
@@ -112,7 +112,7 @@ dict(
     ...
 )
 ```
-In the default model, labels names are: `['spot_ankle_left', 'spot_ankle_right', 'spot_elbow_left', 'spot_elbow_right', 'spot_finger_left_001', 'spot_finger_left_002', 'spot_finger_left_003', 'spot_finger_right_001', 'spot_finger_right_002', 'spot_finger_right_003', 'spot_head_001', 'spot_head_002', 'spot_head_003', 'spot_hip_left', 'spot_hip_right', 'spot_knee_left', 'spot_knee_right', 'spot_paw_front_left', 'spot_paw_front_right', 'spot_paw_hind_left', 'spot_paw_hind_right', 'spot_shoulder_left', 'spot_shoulder_right', 'spot_side_left', 'spot_side_right', 'spot_spine_001', 'spot_spine_002', 'spot_spine_003', 'spot_spine_004', 'spot_spine_005', 'spot_spine_006', 'spot_tail_001', 'spot_tail_002', 'spot_tail_003', 'spot_tail_004', 'spot_tail_005', 'spot_tail_006', 'spot_toe_left_001', 'spot_toe_left_002', 'spot_toe_left_003', 'spot_toe_right_001', 'spot_toe_right_002', 'spot_toe_right_003']`.
+In the default model, label names are: `['spot_ankle_left', 'spot_ankle_right', 'spot_elbow_left', 'spot_elbow_right', 'spot_finger_left_001', 'spot_finger_left_002', 'spot_finger_left_003', 'spot_finger_right_001', 'spot_finger_right_002', 'spot_finger_right_003', 'spot_head_001', 'spot_head_002', 'spot_head_003', 'spot_hip_left', 'spot_hip_right', 'spot_knee_left', 'spot_knee_right', 'spot_paw_front_left', 'spot_paw_front_right', 'spot_paw_hind_left', 'spot_paw_hind_right', 'spot_shoulder_left', 'spot_shoulder_right', 'spot_side_left', 'spot_side_right', 'spot_spine_001', 'spot_spine_002', 'spot_spine_003', 'spot_spine_004', 'spot_spine_005', 'spot_spine_006', 'spot_tail_001', 'spot_tail_002', 'spot_tail_003', 'spot_tail_004', 'spot_tail_005', 'spot_tail_006', 'spot_toe_left_001', 'spot_toe_left_002', 'spot_toe_left_003', 'spot_toe_right_001', 'spot_toe_right_002', 'spot_toe_right_003']`.
 To differentiate manually annotated labels from reconstructed marker locations, these names are later on modified internally (see `joint_marker_order` in `model.npy`).
 Currently, some label names are hard coded. Therefore changing these names is not recommended (see function `initialize_x` in `calibration.py`).
 The hard coded label names are: 'spot_head_002', 'spot_head_003'. Labels with the strings 'spine' and 'tail' in their names are used for roughly aligning the 3D orientation of the animal before learning its anatomy.
