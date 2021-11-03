@@ -2,7 +2,7 @@
 
 #### x_calib.npy
 
-Learned bone lengths and relative marker positions as well as pose variables (i.e. bone rotations and a translations) for all time points of the sequence, which is used for learning the animal's anatomy. The format is:
+Learned bone lengths and relative marker positions as well as pose variables (i.e. bone rotations and translations) for all time points of the sequence, which is used for learning the animal's anatomy. The format is:
 ```
 np.ndarray, shape=(nBones + 3*nMarkers + (3*nBones+3)*nFrames_calib,), dtype('float64'),
 ```
