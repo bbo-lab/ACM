@@ -21,10 +21,16 @@ Thus, `dFrames_calib=50` and `index_frames_calib=list([[0,100],])` will result i
 In the initialization step the animal's pose in the first time point of the sequence, which sould be reconstructed, is learned via gradient descent optimization.
 
 ###### Pose reconstruction
-In the final step model parameters are learned via the EM algorithm to allow for effectively reconstructing a sequence with the RTS smoother. The most important parameter is:
+In the final step the model parameters are learned, i.e. poses are reconstructed. The most important parameters are:
 ```
+# determines which constraints will be enforced when poses are reconstructed (values: 1 - 4)
+# 1: no constraints (deterministic model)
+# 2: only anatomical constraints (deterministic model)
+# 3: only temporal constraints (probabilistic model)
+# 4: anatomical and temporal constraints (probabilistic model) 
+mode = 4
 # the number of frames to skip between time points in the sequence, which should be reconstructed
-dt = 5 
+dt = 5
 ```
 
 #### model.npy

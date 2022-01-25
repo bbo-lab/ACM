@@ -36,7 +36,7 @@ Thus, the first `nBones+3*nMarkers` entries of `x_ini.npy` are identical to `x_c
 
 #### save_dict.npy
 
-Learned model parameters as well as resulting latent variables and corresponding covariance matrices for the entire sequence. The format is:
+Learned model parameters as well as resulting latent variables and corresponding covariance matrices for the entire sequence. If temporal constraints are enforced (i.e. `mode=4` or `mode=3` in `calibration.py`), the format is:
 ```
 dict(
     # learned transition matrix (legacy: this is fixed to the identity matrix) # LEGACY
@@ -53,6 +53,13 @@ dict(
     'var_g': np.ndarray, shape=(nMeasurement, nMeasurement,), dtype('float64'),
     # inferred covariance matrices of the latent variables (inferrence is based on the learned model parameters)
     'var_uks': np.ndarray, shape=(nFrames+1, nLatent, nLatent,), dtype('float64'),
+)
+```
+If only anatomical or no constraints are enforced (i.e. `mode=2` or `mode=1` in `calibration.py`), the format is:
+```
+dict(
+    # inferred latent variables (inferrence is based on the learned model parameters; mu_fit[0] is filled with nan's, since it corresponds to mu0)
+    'mu_fit': np.ndarray, shape=(nFrames+1, nLatent,), dtype('float64'),
 )
 ```
 
