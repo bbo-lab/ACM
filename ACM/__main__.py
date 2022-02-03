@@ -30,9 +30,10 @@ def track(args):
 
     from . import calibration
     from . import initialization
+    from . import fitting
     from . import em_run
     
-    full_pipline = args.calibration==False and args.initialization==False  and args.poseinference==False
+    full_pipline = args.calibration==False and args.initialization==False and args.poseinference==False
     
     if args.calibration==True or full_pipline:
         check_directory(cfg.folder_calib,'Calibration') or sys.exit(1)
@@ -51,19 +52,18 @@ def track(args):
         
     # run pose reconstruction
     if args.poseinference==True or full_pipline:
-        if (cfg.mode == 4):
-            # run probabilistic model
+        if ((cfg.mode == 1) or (cfg.mode == 2)):
+            # run deterministic models
+            fitting.main()
+        elif ((cfg.mode == 3) or (cfg.mode == 4)):
+            # run probabilistic models
             em_run.main()
-        else:
-            print('ERROR: Please choose mode 4')
-
 
 def viewer():
     config = get_config_dict()
 
     from .gui import viewer
     viewer.start(config)
-
 
 def get_config_dict():
     import configuration as cfg
@@ -74,7 +74,6 @@ def get_config_dict():
             del config[k]
 
     return config
-
 
 def check_directory(path,dirtype):
     if os.path.isdir(path) :
