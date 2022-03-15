@@ -188,7 +188,9 @@ class Viewer(QMainWindow):
             resultidx = self.resultidx
 
         print(f'{camidx} {frameidx}')
-        frame = self.get_vidreader(camidx).get_data(frameidx)[:,:,0] # self.get_config()['folder_project']
+        frame = self.get_vidreader(camidx).get_data(frameidx)
+        if len(frame.shape)>2:
+            frame=frame[:,:,0] # self.get_config()['folder_project']
         #pprint(self.get_vidreader(camidx).get_meta_data(frameidx))
 
         calib = np.load(self.get_config()['file_calibration'],allow_pickle=True).item()
