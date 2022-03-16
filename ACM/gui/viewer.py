@@ -1,6 +1,6 @@
 import sys, os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QFrame, QGridLayout, \
-                            QSlider, QComboBox, QLineEdit
+                            QSlider, QComboBox, QLineEdit, QCheckBox
 from PyQt5.QtCore import Qt
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -35,6 +35,9 @@ class Viewer(QMainWindow):
     frame_lineedit = []
     cam_combobox = []
     result_combobox = []
+    marker_checkboxes = []
+    
+    frame_cache = [-1, -1, []]
 
     clear = 4
 
@@ -88,6 +91,8 @@ class Viewer(QMainWindow):
         layoutGrid.setSpacing(0)
         layoutGrid.setRowStretch(0, 9)
         layoutGrid.setRowStretch(1, 1)
+        layoutGrid.setColumnStretch(0, 5)
+        layoutGrid.setColumnStretch(1, 1)
         self.frame_main.setLayout(layoutGrid)
 
         frame_plot = QFrame()
@@ -95,9 +100,15 @@ class Viewer(QMainWindow):
         layoutGrid_plot = QGridLayout()
         layoutGrid_plot.setSpacing(0)
         frame_plot.setLayout(layoutGrid_plot)
+        
+        frame_labels = QFrame()
+        layoutGrid.addWidget(frame_labels, 0, 1)
+        layoutGrid_labels = QGridLayout()
+        layoutGrid_labels.setSpacing(0)
+        frame_labels.setLayout(layoutGrid_labels)
 
         frame_controls = QFrame()
-        layoutGrid.addWidget(frame_controls, 1, 0)
+        layoutGrid.addWidget(frame_controls, 1, 0, 1, 2)
         layoutGrid_control = QGridLayout()
         layoutGrid_control.setSpacing(10)
         layoutGrid_control.setRowStretch(0, 1)
@@ -106,7 +117,15 @@ class Viewer(QMainWindow):
         layoutGrid_control.setColumnStretch(1, 4)
         layoutGrid_control.setColumnStretch(1, 1)
         frame_controls.setLayout(layoutGrid_control)
-
+        
+        model = np.load(self.get_config()['file_model'],allow_pickle=True).item()
+        for i, mlabel in enumerate(model['joint_marker_order']):
+            self.marker_checkboxes.append(QCheckBox())
+            self.marker_checkboxes[-1].setChecked(True)
+            self.marker_checkboxes[-1].setText(mlabel)
+            self.marker_checkboxes[-1].toggled.connect(lambda:self.show_frame())
+            layoutGrid_labels.addWidget(self.marker_checkboxes[-1], i, 0)
+            
         self.frame_slider = QSlider(Qt.Horizontal)
         self.frame_slider.setMinimum(self.get_config()['index_frame_start']+1)
         self.frame_slider.setMaximum(self.get_config()['index_frame_end'])
@@ -187,12 +206,14 @@ class Viewer(QMainWindow):
         if resultidx is None:
             resultidx = self.resultidx
 
-        print(f'{camidx} {frameidx}')
-        frame = self.get_vidreader(camidx).get_data(frameidx)
-        if len(frame.shape)>2:
-            frame=frame[:,:,0] # self.get_config()['folder_project']
-        #pprint(self.get_vidreader(camidx).get_meta_data(frameidx))
-
+        if self.frame_cache[0] == camidx and self.frame_cache[1] == frameidx:
+            frame = self.frame_cache[2]
+        else:
+            frame = self.get_vidreader(camidx).get_data(frameidx)
+            if len(frame.shape)>2:
+                frame=frame[:,:,0] # self.get_config()['folder_project']
+            self.frame_cache = [camidx, frameidx, frame]
+            
         calib = np.load(self.get_config()['file_calibration'],allow_pickle=True).item()
 
         labels_man = np.load(self.get_config()['file_labelsManual'],allow_pickle=True)['arr_0'].item()
@@ -210,7 +231,8 @@ class Viewer(QMainWindow):
         self.ax.set_yticks([])
 
         # Plot dlc labels if applicable
-        self.ax.plot(labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,:,0],labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,:,1],'bo')
+        checked_markers = np.asarray([mc.isChecked() for mc in self.marker_checkboxes]);
+        self.ax.plot(labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,0],labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,1],'bo')
 
         # Plot manual labels if applicable
         if frameidx in labels_man:
@@ -225,7 +247,6 @@ class Viewer(QMainWindow):
                 pose = np.load(posefile,allow_pickle=True).item()
                 closestposeidx = np.argmin(np.abs(self.frames-frameidx))
                 joint_positions_3d = pose['joint_positions_3d'][[closestposeidx],:,:]
-                print(f"{self.frames[closestposeidx]} {frameidx}")
                 joint_positions_2d = np.asarray(map_m(self.calib['RX1_fit'],
                                             self.calib['tX1_fit'],
                                             self.calib['A_fit'],
@@ -234,8 +255,6 @@ class Viewer(QMainWindow):
                 
                 for edge in model['skeleton_edges']:
                     self.ax.plot(joint_positions_2d[:,camidx,edge,0][0],joint_positions_2d[:,camidx,edge,1][0],'r')
-                    print(f"Plotting edge {edge}")
-                    print(joint_positions_2d[:,camidx,edge,1][0])
                     
 
                 self.ax.plot(joint_positions_2d[:,camidx,:,0],joint_positions_2d[:,camidx,:,1],'r+')
