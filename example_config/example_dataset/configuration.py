@@ -49,7 +49,7 @@ plot_calib = False
 sigma_factor = 10.0
 body_weight = 72.0 # [g]
 dFrames_calib = 200 
-index_frames_calib = list([[6900, 44300],])
+index_frames_calib = 'all'
 #
 opt_method_calib = 'L-BFGS-B'
 opt_options_calib__disp = False
