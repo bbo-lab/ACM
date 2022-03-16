@@ -24,6 +24,9 @@ class Viewer(QMainWindow):
     results = []
     calib = []
     frames = []
+    
+    labels_dlc = None
+    labels_manual = None
 
     camidx = 0
     frameidx = 0
@@ -199,6 +202,21 @@ class Viewer(QMainWindow):
 
         if showframe and self.globalnotify:
             self.show_frame()
+    
+    
+    def get_dlc_labels(self):
+        if self.labels_dlc is None:
+            self.labels_dlc = np.load(self.get_config()['file_labelsDLC'],allow_pickle=True).item()
+            
+        return self.labels_dlc
+    
+    
+    def get_manual_labels(self):
+        if self.labels_manual is None:
+            self.labels_manual = np.load(self.get_config()['file_labelsManual'],allow_pickle=True)['arr_0'].item()
+            
+        return self.labels_manual
+    
 
     def show_frame(self,camidx=None,frameidx=None,resultidx=None,actions=["clear","imshow","dlc","manual","joints","draw"]):
         if camidx is None:
@@ -218,9 +236,6 @@ class Viewer(QMainWindow):
             
         calib = np.load(self.get_config()['file_calibration'],allow_pickle=True).item()
 
-        labels_man = np.load(self.get_config()['file_labelsManual'],allow_pickle=True)['arr_0'].item()
-        labels_dlc = np.load(self.get_config()['file_labelsDLC'],allow_pickle=True).item()
-
         if "clear" in actions:
             self.ax.clear()
             self.ax.set_xticklabels('')
@@ -234,10 +249,10 @@ class Viewer(QMainWindow):
                         vmin=0,
                         vmax=255)
             
-        print(actions)
-
+        
         # Plot dlc labels if applicable
         if "dlc" in actions:
+            labels_dlc = self.get_dlc_labels()
             for c in self.plot_components["dlc"]:
                 c.remove()
             checked_markers = np.asarray([mc.isChecked() for mc in self.marker_checkboxes]);
@@ -245,12 +260,13 @@ class Viewer(QMainWindow):
 
         # Plot manual labels if applicable
         if "manual" in actions:
+            labels_man = self.get_manual_labels()
             for c in self.plot_components["manual"]:
                 c.remove()
             self.plot_components["manual"] = []
             if frameidx in labels_man:
                 for k in labels_man[frameidx]:
-                    self.plot_components["manual"].append(self.ax.plot(labels_man[frameidx][k][camidx,0],labels_man[frameidx][k][camidx,1],'g+'))
+                    self.plot_components["manual"].append(self.ax.plot(labels_man[frameidx][k][camidx,0],labels_man[frameidx][k][camidx,1],'g+')[0])
         
         if "joints" in actions:
             # Calculate and plot joint positions
