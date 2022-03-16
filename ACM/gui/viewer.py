@@ -37,6 +37,8 @@ class Viewer(QMainWindow):
     result_combobox = []
     marker_checkboxes = []
     
+    plot_components = {'dlc': [], 'manual': []}
+    
     frame_cache = [-1, -1, []]
 
     clear = 4
@@ -123,7 +125,7 @@ class Viewer(QMainWindow):
             self.marker_checkboxes.append(QCheckBox())
             self.marker_checkboxes[-1].setChecked(True)
             self.marker_checkboxes[-1].setText(mlabel)
-            self.marker_checkboxes[-1].toggled.connect(lambda:self.show_frame())
+            self.marker_checkboxes[-1].toggled.connect(lambda:self.show_frame(actions=["dlc","draw"]))
             layoutGrid_labels.addWidget(self.marker_checkboxes[-1], i, 0)
             
         self.frame_slider = QSlider(Qt.Horizontal)
@@ -198,7 +200,7 @@ class Viewer(QMainWindow):
         if showframe and self.globalnotify:
             self.show_frame()
 
-    def show_frame(self,camidx=None,frameidx=None,resultidx=None):
+    def show_frame(self,camidx=None,frameidx=None,resultidx=None,actions=["clear","imshow","dlc","manual","joints","draw"]):
         if camidx is None:
             camidx = self.camidx
         if frameidx is None:
@@ -219,49 +221,62 @@ class Viewer(QMainWindow):
         labels_man = np.load(self.get_config()['file_labelsManual'],allow_pickle=True)['arr_0'].item()
         labels_dlc = np.load(self.get_config()['file_labelsDLC'],allow_pickle=True).item()
 
-        self.ax.clear()
-        self.ax.imshow(frame,
-                       aspect=1,
-                       cmap='gray',
-                       vmin=0,
-                       vmax=255)
-        self.ax.set_xticklabels('')
-        self.ax.set_yticklabels('')
-        self.ax.set_xticks([])
-        self.ax.set_yticks([])
+        if "clear" in actions:
+            self.ax.clear()
+            self.ax.set_xticklabels('')
+            self.ax.set_yticklabels('')
+            self.ax.set_xticks([])
+            self.ax.set_yticks([])
+            
+            self.ax.imshow(frame,
+                        aspect=1,
+                        cmap='gray',
+                        vmin=0,
+                        vmax=255)
+            
+        print(actions)
 
         # Plot dlc labels if applicable
-        checked_markers = np.asarray([mc.isChecked() for mc in self.marker_checkboxes]);
-        self.ax.plot(labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,0],labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,1],'bo')
+        if "dlc" in actions:
+            for c in self.plot_components["dlc"]:
+                c.remove()
+            checked_markers = np.asarray([mc.isChecked() for mc in self.marker_checkboxes]);
+            self.plot_components["dlc"] = self.ax.plot(labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,0],labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,1],'bo')
 
         # Plot manual labels if applicable
-        if frameidx in labels_man:
-            for k in labels_man[frameidx]:
-                self.ax.plot(labels_man[frameidx][k][camidx,0],labels_man[frameidx][k][camidx,1],'g+')
-
-        # Calculate and plot joint positions
-        if resultidx+1 < len(self.results):
-            posefile = os.path.join(self.get_config()['folder_project'], 'results', self.results[resultidx], 'pose.npy')
-            if os.path.isfile(posefile):
-                model = np.load(os.path.join(self.get_config()['folder_project'],"model.npy"),allow_pickle=True).item()
-                pose = np.load(posefile,allow_pickle=True).item()
-                closestposeidx = np.argmin(np.abs(self.frames-frameidx))
-                joint_positions_3d = pose['joint_positions_3d'][[closestposeidx],:,:]
-                joint_positions_2d = np.asarray(map_m(self.calib['RX1_fit'],
-                                            self.calib['tX1_fit'],
-                                            self.calib['A_fit'],
-                                            self.calib['k_fit'],
-                                            torch.from_numpy(joint_positions_3d)))
-                
-                for edge in model['skeleton_edges']:
-                    self.ax.plot(joint_positions_2d[:,camidx,edge,0][0],joint_positions_2d[:,camidx,edge,1][0],'r')
+        if "manual" in actions:
+            for c in self.plot_components["manual"]:
+                c.remove()
+            self.plot_components["manual"] = []
+            if frameidx in labels_man:
+                for k in labels_man[frameidx]:
+                    self.plot_components["manual"].append(self.ax.plot(labels_man[frameidx][k][camidx,0],labels_man[frameidx][k][camidx,1],'g+'))
+        
+        if "joints" in actions:
+            # Calculate and plot joint positions
+            if resultidx+1 < len(self.results):
+                posefile = os.path.join(self.get_config()['folder_project'], 'results', self.results[resultidx], 'pose.npy')
+                if os.path.isfile(posefile):
+                    model = np.load(os.path.join(self.get_config()['folder_project'],"model.npy"),allow_pickle=True).item()
+                    pose = np.load(posefile,allow_pickle=True).item()
+                    closestposeidx = np.argmin(np.abs(self.frames-frameidx))
+                    joint_positions_3d = pose['joint_positions_3d'][[closestposeidx],:,:]
+                    joint_positions_2d = np.asarray(map_m(self.calib['RX1_fit'],
+                                                self.calib['tX1_fit'],
+                                                self.calib['A_fit'],
+                                                self.calib['k_fit'],
+                                                torch.from_numpy(joint_positions_3d)))
                     
+                    for edge in model['skeleton_edges']:
+                        self.ax.plot(joint_positions_2d[:,camidx,edge,0][0],joint_positions_2d[:,camidx,edge,1][0],'r')
+                        
 
-                self.ax.plot(joint_positions_2d[:,camidx,:,0],joint_positions_2d[:,camidx,:,1],'r+')
-            else:
-                print(f"{posefile} not found")
-
-        self.canvas.draw()
+                    self.ax.plot(joint_positions_2d[:,camidx,:,0],joint_positions_2d[:,camidx,:,1],'r+')
+                else:
+                    print(f"{posefile} not found")
+                    
+        if "draw" in actions:
+            self.canvas.draw()
 
 
     def read_videos(self):
