@@ -256,7 +256,13 @@ class Viewer(QMainWindow):
             for c in self.plot_components["dlc"]:
                 c.remove()
             checked_markers = np.asarray([mc.isChecked() for mc in self.marker_checkboxes]);
-            self.plot_components["dlc"] = self.ax.plot(labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,0],labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,1],'bo')
+            used_markers = np.squeeze(labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,:,2]>=0.9)
+            show_mask = used_markers & checked_markers
+            print(f'DLC used/unused labels: {np.sum(used_markers)}/{np.sum(~used_markers)}')
+            self.plot_components["dlc"] = self.ax.plot(
+                labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,show_mask,0],
+                labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,show_mask,1],
+                'bo')
 
         # Plot manual labels if applicable
         if "manual" in actions:
