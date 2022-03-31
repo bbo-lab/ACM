@@ -1,6 +1,6 @@
 import sys, os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QFrame, QGridLayout, \
-                            QSlider, QComboBox, QLineEdit, QCheckBox
+                            QSlider, QComboBox, QLineEdit, QCheckBox,QScrollArea
 from PyQt5.QtCore import Qt
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -106,7 +106,7 @@ class Viewer(QMainWindow):
         layoutGrid_plot.setSpacing(0)
         frame_plot.setLayout(layoutGrid_plot)
         
-        frame_labels = QFrame()
+        frame_labels = QScrollArea() #TODO: Make this properly scollable
         layoutGrid.addWidget(frame_labels, 0, 1)
         layoutGrid_labels = QGridLayout()
         layoutGrid_labels.setSpacing(0)
