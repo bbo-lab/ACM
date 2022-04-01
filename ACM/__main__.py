@@ -10,6 +10,7 @@ def main():
     parser.add_argument('INPUT_PATH', type=str, help="Directory with job configuration")
     parser.add_argument('--viewer', required=False, help="Load viewer instead of tracking pose", action="store_true")
     parser.add_argument('--export', required=False, help="Exports result in alternative format", action="store_true")
+    parser.add_argument('--makepose', required=False, help="Creates pose file save_dict", action="store_true")
     parser.add_argument('--calibration', required=False, help="Perform calibration only", action="store_true")
     parser.add_argument('--initialization', required=False, help="Perform initialization only (Requires calibration)", action="store_true")
     parser.add_argument('--poseinference', required=False, help="Perform poseinference only (Requires calibration and initialization)", action="store_true")
@@ -18,14 +19,30 @@ def main():
 
     # Load config
     # TODO change config system, e.g. pass around a dictionary instead of importing the config everywhere, requiring the sys.path.insert
-    sys.path.insert(0,input_path)
-    print(f'Loading {input_path} ...')
 
     if args.viewer:
+        sys.path.insert(0,input_path)
+        print(f'Loading {input_path} ...')
         viewer()
     elif args.export:
         from .export import export
         export(input_path) 
+    elif args.makepose:
+        import numpy as np
+        from scipy.io import savemat
+        config_path = input_path+'/../..'
+        sys.path.insert(0,config_path)
+        print(f'Loading {config_path} ...')
+        from . import tools 
+        config = get_config_dict()
+        save_dict = np.load(input_path+'/save_dict.npy',allow_pickle=True).item()
+        x_ini = np.load(input_path+'/x_ini.npy',allow_pickle=True)
+        pose = tools.propagate_latent_to_pose(config,save_dict,x_ini)
+
+        posepath = input_path+'/pose'
+        print(f'Saving pose to {posepath}')
+        np.save(posepath+'.npy', pose)
+        savemat(posepath+'.mat', pose)
     else:
         track(args)
 
