@@ -1,6 +1,6 @@
 import sys, os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QFrame, QGridLayout, \
-                            QSlider, QComboBox, QLineEdit, QCheckBox,QScrollArea
+                            QSlider, QComboBox, QLineEdit, QCheckBox,QScrollArea, QAction
 from PyQt5.QtCore import Qt
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -39,6 +39,8 @@ class Viewer(QMainWindow):
     cam_combobox = []
     result_combobox = []
     marker_checkboxes = []
+
+    menu = dict()
     
     plot_components = {'dlc': [], 'manual': []}
     
@@ -72,6 +74,7 @@ class Viewer(QMainWindow):
 
         self.frames = np.asarray(list(range(self.get_config()['index_frame_start'],self.get_config()['index_frame_end'],self.get_config()['dt'])))
 
+        self.make_menu()
         self.make_gui()
 
         print("Setting defaults")
@@ -86,6 +89,16 @@ class Viewer(QMainWindow):
 
     def get_vidreader(self,vididx):
         return self.vidreader[vididx]
+
+    def make_menu(self):
+        self.menu['menu'] = self.menuBar()
+
+        self.menu['menu_file'] = self.menu['menu'].addMenu("&Export")
+
+        saveframeAction = QAction("&Save frame", self)
+        saveframeAction.triggered.connect(self.save_frame)
+        self.menu['menu_file'].addAction(saveframeAction)
+
 
     def make_gui(self):
         self.setGeometry(0, 0, 1280, 900)
@@ -320,6 +333,18 @@ class Viewer(QMainWindow):
         videoFiles = sorted(videoFiles)
 
         return videoFiles
+
+    def save_frame(self):
+        figpath = os.path.join(self.get_config()['folder_project'], 'results', self.results[self.resultidx], 'exports')
+        print(f"Saving frame {self.frameidx} to {figpath}... ",end='')
+        os.makedirs(figpath,exist_ok=True)
+        self.fig.savefig(os.path.join(figpath, f'frame_{self.frameidx}_{self.results[self.resultidx]}.svg'),
+                    bbox_inches='tight',
+                    dpi=600,
+                    transparent=True,
+                    format='svg',
+                    pad_inches=0)
+        print('Success')
 
 
 def start(config):
