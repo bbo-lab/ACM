@@ -1,6 +1,6 @@
 import sys, os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QFrame, QGridLayout, \
-                            QSlider, QComboBox, QLineEdit, QCheckBox
+                            QSlider, QComboBox, QLineEdit, QCheckBox,QScrollArea
 from PyQt5.QtCore import Qt
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -106,7 +106,7 @@ class Viewer(QMainWindow):
         layoutGrid_plot.setSpacing(0)
         frame_plot.setLayout(layoutGrid_plot)
         
-        frame_labels = QFrame()
+        frame_labels = QScrollArea() #TODO: Make this properly scollable
         layoutGrid.addWidget(frame_labels, 0, 1)
         layoutGrid_labels = QGridLayout()
         layoutGrid_labels.setSpacing(0)
@@ -257,11 +257,12 @@ class Viewer(QMainWindow):
             for c in self.plot_components["dlc"]:
                 c.remove()
             checked_markers = np.asarray([mc.isChecked() for mc in self.marker_checkboxes]);
-            used_markers = labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,:,2]>=0.9
-            show mask = checked_markers | checked_markers
+            used_markers = np.squeeze(labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,:,2]>=0.9)
+            show_mask = used_markers & checked_markers
+            print(f'DLC used/unused labels: {np.sum(used_markers)}/{np.sum(~used_markers)}')
             self.plot_components["dlc"] = self.ax.plot(
-                labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,mask,0],
-                labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,mask,1],
+                labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,show_mask,0],
+                labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,show_mask,1],
                 'bo')
 
         # Plot manual labels if applicable
