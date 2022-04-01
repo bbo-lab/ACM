@@ -9,6 +9,7 @@ def main():
     parser = argparse.ArgumentParser(description="ACM (Anatomically-constrained model) - a framework for videography based pose tracking of rodents")
     parser.add_argument('INPUT_PATH', type=str, help="Directory with job configuration")
     parser.add_argument('--viewer', required=False, help="Load viewer instead of tracking pose", action="store_true")
+    parser.add_argument('--export', required=False, help="Exports result in alternative format", action="store_true")
     parser.add_argument('--calibration', required=False, help="Perform calibration only", action="store_true")
     parser.add_argument('--initialization', required=False, help="Perform initialization only (Requires calibration)", action="store_true")
     parser.add_argument('--poseinference', required=False, help="Perform poseinference only (Requires calibration and initialization)", action="store_true")
@@ -22,6 +23,9 @@ def main():
 
     if args.viewer:
         viewer()
+    elif args.export:
+        from .export import export
+        export(input_path) 
     else:
         track(args)
 
