@@ -19,10 +19,11 @@ def propagate_latent_to_pose(config,save_dict,x_ini):
         print(save_dict['message'])
     else:
         mu_uks = save_dict['mu'][1:]
-        nT = np.size(mu_uks, 0)
         nPara = np.size(mu_uks, 1)
         var_dummy = np.identity(nPara, dtype=np.float64) * 2**-52
         var_uks = np.tile(var_dummy.ravel(), config['nT']).reshape(config['nT'], nPara, nPara)
+
+    nT = np.size(mu_uks, 0)
 
     file_origin_coord = config['file_origin_coord']
     file_calibration = config['file_calibration']
@@ -64,19 +65,12 @@ def propagate_latent_to_pose(config,save_dict,x_ini):
     args['x_free_torch'] = torch.from_numpy(mu_ini[free_para]).type(model.float_type)
     #
     z_all = torch.from_numpy(mu_uks)
-    _, _, skel3d_all = model.fcn_emission_free(z_all, args)
-    A = args['calibration']['A_fit']
-    k = args['calibration']['k_fit']
-    RX1 = args['calibration']['RX1_fit']
-    tX1 = args['calibration']['tX1_fit']
 
-    #skel2d_all = model.map_m(RX1, tX1, A, k,
-                             #skel3d_all)
-    #skel2d_all = skel2d_all.cpu().numpy()
+    marker_proj, marker_pos, skel3d_all = model.fcn_emission_free(z_all, args)
 
     pose = {
-        'marker_positions_2d': np.asarray([]),
-        'marker_positions_3d': np.asarray([]),
+        'marker_positions_2d': marker_proj.detach().cpu().numpy().reshape(nT, nCameras, nMarkers, 2),
+        'marker_positions_3d': marker_pos.detach().cpu().numpy(),
         'joint_positions_3d': skel3d_all.cpu().numpy(),
         }
 
