@@ -219,6 +219,7 @@ class Viewer(QMainWindow):
     
 
     def show_frame(self,camidx=None,frameidx=None,resultidx=None,actions=["clear","imshow","dlc","manual","joints","draw"]):
+        # TODO implement clearing of respective parts in each section
         if camidx is None:
             camidx = self.camidx
         if frameidx is None:
@@ -256,7 +257,12 @@ class Viewer(QMainWindow):
             for c in self.plot_components["dlc"]:
                 c.remove()
             checked_markers = np.asarray([mc.isChecked() for mc in self.marker_checkboxes]);
-            self.plot_components["dlc"] = self.ax.plot(labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,0],labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,checked_markers,1],'bo')
+            used_markers = labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,:,2]>=0.9
+            show mask = checked_markers | checked_markers
+            self.plot_components["dlc"] = self.ax.plot(
+                labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,mask,0],
+                labels_dlc['labels_all'][labels_dlc['frame_list']==frameidx,camidx,mask,1],
+                'bo')
 
         # Plot manual labels if applicable
         if "manual" in actions:
