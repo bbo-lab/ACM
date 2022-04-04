@@ -1,6 +1,6 @@
 import sys, os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QFrame, QGridLayout, \
-                            QSlider, QComboBox, QLineEdit, QCheckBox,QScrollArea, QAction
+                            QSlider, QComboBox, QLineEdit, QCheckBox, QPushButton, QScrollArea, QAction
 from PyQt5.QtCore import Qt
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -132,8 +132,11 @@ class Viewer(QMainWindow):
         layoutGrid_control.setRowStretch(0, 1)
         layoutGrid_control.setRowStretch(1, 1)
         layoutGrid_control.setColumnStretch(0, 1)
-        layoutGrid_control.setColumnStretch(1, 4)
-        layoutGrid_control.setColumnStretch(1, 1)
+        layoutGrid_control.setColumnStretch(1, 2)
+        layoutGrid_control.setColumnStretch(2, 2)
+        layoutGrid_control.setColumnStretch(3, 1)
+        layoutGrid_control.setColumnStretch(4, 0)
+        layoutGrid_control.setColumnStretch(5, 0)
         frame_controls.setLayout(layoutGrid_control)
         
         model = np.load(self.get_config()['file_model'],allow_pickle=True).item()
@@ -149,22 +152,38 @@ class Viewer(QMainWindow):
         self.frame_slider.setMaximum(self.get_config()['index_frame_end'])
         self.frame_slider.setTickInterval(1)
         self.frame_slider.sliderReleased.connect(lambda: self.set_frameidx(self.frame_slider.value()-1))
-        layoutGrid_control.addWidget(self.frame_slider, 0, 0, 1, 2)
+        layoutGrid_control.addWidget(self.frame_slider, 0, 0, 1, 3)
 
         self.frame_lineedit = QLineEdit()
         self.frame_lineedit.editingFinished.connect(lambda: self.set_frameidx(int(self.frame_lineedit.text())-1)) # TODO add QtValidator
-        layoutGrid_control.addWidget(self.frame_lineedit, 0, 2, 1, 1)
+        layoutGrid_control.addWidget(self.frame_lineedit, 0, 3, 1, 1)
+        
+        self.frame_buttonback = QPushButton()
+        self.frame_buttonback.setText('<')
+        self.frame_buttonback.setMinimumWidth(1)
+        self.frame_buttonback.clicked.connect(lambda: self.set_frameidx(int(self.frame_lineedit.text())-1-int(self.frameskip_lineedit.text()))) # TODO add QtValidator
+        layoutGrid_control.addWidget(self.frame_buttonback, 0, 4, 1, 1)
+        
+        self.frameforward_button = QPushButton()
+        self.frameforward_button.setText('>')
+        self.frameforward_button.setMinimumWidth(1)
+        self.frameforward_button.clicked.connect(lambda: self.set_frameidx(int(self.frame_lineedit.text())-1+int(self.frameskip_lineedit.text()))) # TODO add QtValidator
+        layoutGrid_control.addWidget(self.frameforward_button, 0, 5, 1, 1)
+        
+        self.frameskip_lineedit = QLineEdit()
+        self.frameskip_lineedit.setText('1')
+        layoutGrid_control.addWidget(self.frameskip_lineedit, 1, 4, 1, 2)
 
         self.cam_combobox = QComboBox()
         self.cam_combobox.addItems([ f'Camera {n}' for n in range(len(self.vidreader)) ])
         self.cam_combobox.currentIndexChanged.connect(lambda n: self.set_camidx(n))
-        layoutGrid_control.addWidget(self.cam_combobox, 1, 0)
+        layoutGrid_control.addWidget(self.cam_combobox, 1, 0, 1, 2)
 
         print(self.get_config()['folder_save'])
         self.result_combobox = QComboBox()
         self.result_combobox.addItems(self.results)
         self.result_combobox.currentIndexChanged.connect(lambda n: self.set_resultidx(n))
-        layoutGrid_control.addWidget(self.result_combobox, 1, 1, 1, 2)
+        layoutGrid_control.addWidget(self.result_combobox, 1, 2, 1, 2)
 
         self.fig = Figure(tight_layout=True)
         self.canvas = FigureCanvasQTAgg(self.fig)
