@@ -44,6 +44,8 @@ def main():
         np.save(posepath+'.npy', pose)
         savemat(posepath+'.mat', pose)
     else:
+        config = get_config_dict()
+        copy_config(config,input_path)
         track(args)
 
 def track(args):
