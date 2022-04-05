@@ -4,8 +4,6 @@ import torch
 from scipy.io import savemat
 import shutil
 
-import configuration as cfg
-
 #from . import em
 from . import helper
 #from . import kalman
@@ -82,9 +80,9 @@ def copy_config(config,input_path):
     configdocdir = config["folder_save"]+'/configuration/'
     os.makedirs(configdocdir,exist_ok=True)
 
-    shutil.copyfile(input_path+'/configuration.py',configdocdir)
-    shutil.copyfile(config['file_origin_coord'],configdocdir)
-    shutil.copyfile(config['file_calibration'],configdocdir)
-    shutil.copyfile(config['file_model'],configdocdir)
-    shutil.copyfile(config['file_labelsDLC'],configdocdir)
-    shutil.copyfile(config['file_labelsManual'],configdocdir)
+    shutil.copy(input_path+'/configuration.py',configdocdir)
+    shutil.copy(config['file_origin_coord'],configdocdir)
+    shutil.copy(config['file_calibration'],configdocdir)
+    shutil.copy(config['file_model'],configdocdir)
+    shutil.copy(config['file_labelsDLC'],configdocdir)
+    shutil.copy(config['file_labelsManual'],configdocdir)
