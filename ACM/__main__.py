@@ -48,9 +48,9 @@ def main():
         from .export import export
         from .tools import copy_config
         print(f'Loading {input_path} ...')
+        track(args)
         config = get_config_dict()
         copy_config(config,input_path)
-        track(args)
         export(config['folder_save']) 
 
 def track(args):

@@ -81,8 +81,8 @@ def copy_config(config,input_path):
     os.makedirs(configdocdir,exist_ok=True)
 
     shutil.copy(input_path+'/configuration.py',configdocdir)
-    shutil.copy(config['file_origin_coord'],configdocdir)
-    shutil.copy(config['file_calibration'],configdocdir)
-    shutil.copy(config['file_model'],configdocdir)
-    shutil.copy(config['file_labelsDLC'],configdocdir)
-    shutil.copy(config['file_labelsManual'],configdocdir)
+    shutil.copyfile(config['file_origin_coord'],configdocdir+"/file_origin_coord.npy")
+    shutil.copyfile(config['file_calibration'],configdocdir+"/file_calibration.npy")
+    shutil.copyfile(config['file_model'],configdocdir+"/file_model.npy")
+    shutil.copyfile(config['file_labelsDLC'],configdocdir+"/file_labelsDLC.npy")
+    shutil.copyfile(config['file_labelsManual'],configdocdir+"/file_labelsManual.npz")
