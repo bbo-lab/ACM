@@ -48,10 +48,22 @@ def main():
         from .export import export
         from .tools import copy_config
         print(f'Loading {input_path} ...')
-        track(args)
+        check(args)
         config = get_config_dict()
         copy_config(config,input_path)
+        track(args)
         export(config['folder_save']) 
+
+def check(args):
+    import configuration as cfg
+    full_pipline = args.calibration==False and args.initialization==False and args.poseinference==False
+    
+    if args.calibration==True or full_pipline:
+        check_directory(cfg.folder_calib,'Calibration') or sys.exit(1)
+    if args.initialization==True or full_pipline:
+        check_directory(cfg.folder_init,'Initialization') or sys.exit(1)
+    if args.poseinference==True or full_pipline:
+        check_directory(cfg.folder_save,'Result') or sys.exit(1)
 
 def track(args):
     import configuration as cfg
@@ -62,13 +74,6 @@ def track(args):
     from . import em_run
     
     full_pipline = args.calibration==False and args.initialization==False and args.poseinference==False
-    
-    if args.calibration==True or full_pipline:
-        check_directory(cfg.folder_calib,'Calibration') or sys.exit(1)
-    if args.initialization==True or full_pipline:
-        check_directory(cfg.folder_init,'Initialization') or sys.exit(1)
-    if args.poseinference==True or full_pipline:
-        check_directory(cfg.folder_save,'Result') or sys.exit(1)
     
     # calibrate    
     if args.calibration==True or full_pipline:
