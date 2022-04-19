@@ -47,7 +47,10 @@ def export(result_path):
 
     # get save_dict
     save_dict = np.load(result_path+'/save_dict.npy', allow_pickle=True).item()
-    mu_uks_norm = save_dict['mu_uks'][1:]
+    if ('mu_uks' in save_dict):
+        mu_uks_norm = np.copy(save_dict['mu_uks'][1:])
+    else:
+        mu_uks_norm = np.copy(save_dict['mu_fit'][1:])
     mu_uks = model.undo_normalization(torch.from_numpy(mu_uks_norm), args_model).numpy() # reverse normalization
 
     # get x_ini
