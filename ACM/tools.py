@@ -2,13 +2,13 @@ import os
 import numpy as np
 import torch
 from scipy.io import savemat
-
-import configuration as cfg
+import shutil
 
 #from . import em
 from . import helper
 #from . import kalman
 from . import model
+
 
 def propagate_latent_to_pose(config,save_dict,x_ini):
 
@@ -76,3 +76,13 @@ def propagate_latent_to_pose(config,save_dict,x_ini):
 
     return pose
 
+def copy_config(config,input_path):
+    configdocdir = config["folder_save"]+'/configuration/'
+    os.makedirs(configdocdir,exist_ok=True)
+
+    shutil.copy(input_path+'/configuration.py',configdocdir)
+    shutil.copyfile(config['file_origin_coord'],configdocdir+"/file_origin_coord.npy")
+    shutil.copyfile(config['file_calibration'],configdocdir+"/file_calibration.npy")
+    shutil.copyfile(config['file_model'],configdocdir+"/file_model.npy")
+    shutil.copyfile(config['file_labelsDLC'],configdocdir+"/file_labelsDLC.npy")
+    shutil.copyfile(config['file_labelsManual'],configdocdir+"/file_labelsManual.npz")

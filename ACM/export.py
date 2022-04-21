@@ -21,10 +21,9 @@ def export(result_path):
     sys.path.pop(sys.path.index(project_path))
 
     if not hasattr(cfg,'animal_is_large'):
-        list_is_large_animal = [0]
         cfg.animal_is_large = False
-    else:
-        list_is_large_animal = [cfg.animal_is_large]
+
+    list_is_large_animal = [cfg.animal_is_large]
     
     importlib.reload(anatomy)
         
@@ -48,7 +47,10 @@ def export(result_path):
 
     # get save_dict
     save_dict = np.load(result_path+'/save_dict.npy', allow_pickle=True).item()
-    mu_uks_norm = save_dict['mu_uks'][1:]
+    if ('mu_uks' in save_dict):
+        mu_uks_norm = np.copy(save_dict['mu_uks'][1:])
+    else:
+        mu_uks_norm = np.copy(save_dict['mu_fit'][1:])
     mu_uks = model.undo_normalization(torch.from_numpy(mu_uks_norm), args_model).numpy() # reverse normalization
 
     # get x_ini
@@ -94,8 +96,8 @@ def export(result_path):
     data_dict['origin'] = np.load(file_origin_coord,allow_pickle=True).item()
     
     # save
-    np.savez(folder_save+'/export.npz', data_dict)
-    io.savemat(folder_save+'/export.mat', data_dict)
+    np.savez(folder_save+'/motiondata.npz', data_dict)
+    io.savemat(folder_save+'/motiondata.mat', data_dict)
         
 if __name__ == '__main__':
     export(sys.argv[1])

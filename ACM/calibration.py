@@ -204,9 +204,13 @@ def main():
     frame_list_manual = sorted(list(labels_manual.keys()))
     
     # get calibration frame list
-    if type(cfg.index_frames_calib)=='str':
+    print(type(cfg.index_frames_calib))
+    print(cfg.index_frames_calib)
+    if isinstance(cfg.index_frames_calib,str):
+        print('a')
         frame_list_calib = list(labels_manual.keys())
     else:
+        print('b')
         frame_list_calib = np.array([], dtype=np.int64)
         for i in range(np.size(cfg.index_frames_calib, 0)):
             framesList_single = np.arange(cfg.index_frames_calib[i][0],

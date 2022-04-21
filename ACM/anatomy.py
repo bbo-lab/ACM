@@ -77,20 +77,43 @@ def get_bounds_bones(nBones, skeleton_edges, joint_order):
 #     std_tibia = 0.4069397989875161 # cm
 #     mean_humerus = 2.9875 # cm
 #     std_humerus = 0.3287761396451999 # cm
+
+    if not hasattr(cfg,'species'): 
+        cfg.species = 'rat'
+        print()
     
-    # 2002__Lammers__Ontogenetic_allometry_in_the_locomotor_skeleton_of_specialize_half-bounding_mammals
-    mean_humerus = 0.0075 * float(cfg.body_weight) # cm
-    std_humerus = 0.0005 * float(cfg.body_weight) # cm
-    mean_radius = 0.0069 * float(cfg.body_weight) # cm
-    std_radius = 0.0004 * float(cfg.body_weight) # cm
-    mean_metacarpal = 0.0023 * float(cfg.body_weight) # cm
-    std_metacarpal = 0.0001 * float(cfg.body_weight) # cm
-    mean_femur = 0.0102 * float(cfg.body_weight) # cm
-    std_femur = 0.0006 * float(cfg.body_weight) # cm
-    mean_tibia = 0.0114 * float(cfg.body_weight) # cm
-    std_tibia = 0.0006 * float(cfg.body_weight) # cm
-    mean_metatarsal = 0.0053 * float(cfg.body_weight) # cm
-    std_metatarsal = 0.0003 * float(cfg.body_weight) # cm
+    if cfg.species=='rat':
+        # 2002__Lammers__Ontogenetic_allometry_in_the_locomotor_skeleton_of_specialize_half-bounding_mammals
+        mean_humerus = 0.0075 * float(cfg.body_weight) # cm
+        std_humerus = 0.0005 * float(cfg.body_weight) # cm
+        mean_radius = 0.0069 * float(cfg.body_weight) # cm
+        std_radius = 0.0004 * float(cfg.body_weight) # cm
+        mean_metacarpal = 0.0023 * float(cfg.body_weight) # cm
+        std_metacarpal = 0.0001 * float(cfg.body_weight) # cm
+        mean_femur = 0.0102 * float(cfg.body_weight) # cm
+        std_femur = 0.0006 * float(cfg.body_weight) # cm
+        mean_tibia = 0.0114 * float(cfg.body_weight) # cm
+        std_tibia = 0.0006 * float(cfg.body_weight) # cm
+        mean_metatarsal = 0.0053 * float(cfg.body_weight) # cm
+        std_metatarsal = 0.0003 * float(cfg.body_weight) # cm
+    elif cfg.species=='mouse':
+        # Marchini M, Silva Hernandez E, Rolian C. Morphology and development of a novel murine skeletal dysplasia. PeerJ. 2019;7:e7180. Published 2019 Jul 4. doi:10.7717/peerj.7180
+        # adult control lengths calculated by DW in Dropbox (NIG)\8_rat full body tracking\Re_submission January 2022\MouseLimbBoneLengthData\peerj-07-7180-s007.xlsx
+        mean_humerus = 1.162 # cm
+        std_humerus = 0.039 # cm
+        mean_radius = 1.531 # cm
+        std_radius = 0.046 # cm
+        mean_metacarpal = 0.192 # cm
+        std_metacarpal = 0.009 # cm
+        mean_femur = 1.668 # cm
+        std_femur = 0.029 # cm
+        mean_tibia = 1.809 # cm
+        std_tibia = 0.052 # cm
+        mean_metatarsal = 0.639 # cm
+        std_metatarsal = 0.020 # cm
+    else:
+        print('ERROR: Unknown species.')
+        exit()
     
     bounds_low = np.full(nBones, 0.0, dtype=np.float64)
     bounds_high = np.full(nBones, np.inf, dtype=np.float64)
