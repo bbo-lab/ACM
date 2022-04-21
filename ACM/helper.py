@@ -5,16 +5,27 @@ import numpy as np
 import os
 import sys
 import torch
+import warnings
 
 import configuration as cfg
 
 from . import anatomy
 from . import routines_math as rout_m
 
+
 def get_calibration(file_origin_coord, file_calibration,
                     scale_factor):
     calibration = np.load(file_calibration, allow_pickle=True).item()
-    nCameras = calibration['nCameras']
+
+    # This is mostly for backwards compatibility. Newer calibrations from calibcam 1.2.0 onwards
+    # should always have a scale factor of 1.
+    if 'scale_factor' in calibration:
+        if scale_factor is None:
+            scale_factor = calibration['scale_factor']
+        elif not scale_factor == calibration['scale_factor']:
+            warnings.warn("!!!!!!! scale_factor in calibration does not match scale_factor in configuration !!!!!!!")
+
+    n_cameras = calibration['nCameras']
     A = calibration['A_fit']
     k = calibration['k_fit']
     rX1 = calibration['rX1_fit']
@@ -33,7 +44,7 @@ def get_calibration(file_origin_coord, file_calibration,
     # change reference coordinate system to coordinate system of arena
     tX1 = tX1 + np.einsum('nij,j->ni', RX1, origin_arena)
     RX1 = np.einsum('nij,jk->nik', RX1, coord_arena)
-    for i_cam in range(nCameras):
+    for i_cam in range(n_cameras):
         rX1[i_cam] = rout_m.rotMat2rodrigues_single(RX1[i_cam])
         
     # scaling (calibration board square size -> cm)
@@ -46,7 +57,9 @@ def get_calibration(file_origin_coord, file_calibration,
     calibration_torch['rX1_fit'] = torch.from_numpy(rX1)
     calibration_torch['RX1_fit'] = torch.from_numpy(RX1)
     calibration_torch['tX1_fit'] = torch.from_numpy(tX1)
+    calibration_torch['scale_factor'] = scale_factor
     return calibration_torch
+
 
 def get_model3d(file_model):
     # load
@@ -108,6 +121,7 @@ def get_model3d(file_model):
     model3d_torch['bone_lengths_index'] = torch.from_numpy(bone_lengths_index)
     return model3d_torch
 
+
 def get_labelsDLC(file_labelsDLC, pcutoff,
                   joint_marker_order, nCameras, nMarkers):
     # load labels
@@ -118,6 +132,7 @@ def get_labelsDLC(file_labelsDLC, pcutoff,
                        dtype=np.float64)
     labels[labels_mask] = labelsDLC['labels_all'][labels_mask] # shoule be possible to just copy all respective label values
     return labels, labels_mask
+
 
 def get_arguments(file_origin_coord, file_calibration, file_model, file_labelsDLC,
                   scale_factor, pcutoff=0.9):

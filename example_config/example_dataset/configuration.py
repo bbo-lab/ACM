@@ -28,7 +28,7 @@ videos = [ 'cam1_20210511_table_10.ccv.mp4',  'cam2_20210511_table_10.ccv.mp4', 
 
 # camera calibration scaling factor (calibration board square size -> cm) 
 # TODO This should really be in the calibration file
-scale_factor = 6.5 # [cm]
+scale_factor = 1 # [cm]
 # whether to use rodrigues parameterization for all joint angles
 use_rodrigues = True # should always be True
 # whether to use reparameterization of joint angles
