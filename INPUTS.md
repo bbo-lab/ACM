@@ -90,7 +90,7 @@ dict(
 )
 ```
 Any additional keys of the dictionary are not mandatory and originate from the development phase of the method.
-A multi-camera calibration file in this format can be produced with our calibration software [calibcam](https://github.com/bbo-lab/calibcam), using ChArUco boards.
+A multi-camera calibration file in this format can be produced with our calibration software [calibcam](https://github.com/bbo-lab/calibcam), using ChArUco boards (use the `multicalibration-v1.npy` output file).
 
 #### origin_coord.npy
 
