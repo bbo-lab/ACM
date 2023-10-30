@@ -41,12 +41,21 @@ def initialize_x(args,
     RX1 = calibration['RX1_fit'].cpu().numpy()
     tX1 = calibration['tX1_fit'].cpu().numpy()
     A = np.zeros((nCameras, 3, 3), dtype=np.float64)
-    for i_cam in range(nCameras):
-        A[i_cam, 0, 0] = A_entries[i_cam, 0]
-        A[i_cam, 0, 2] = A_entries[i_cam, 1]
-        A[i_cam, 1, 1] = A_entries[i_cam, 2]
-        A[i_cam, 1, 2] = A_entries[i_cam, 3]
-        A[i_cam, 2, 2] = 1.0
+
+    if len(A_entries.shape) == 2:  # Old style calibration
+        for i_cam in range(nCameras):
+            A[i_cam, 0, 0] = A_entries[i_cam, 0]
+            A[i_cam, 0, 2] = A_entries[i_cam, 1]
+            A[i_cam, 1, 1] = A_entries[i_cam, 2]
+            A[i_cam, 1, 2] = A_entries[i_cam, 3]
+            A[i_cam, 2, 2] = 1.0
+    else:
+        for i_cam in range(nCameras):
+            A[i_cam, 0, 0] = A_entries[i_cam, 0, 0]
+            A[i_cam, 0, 2] = A_entries[i_cam, 0, 2]
+            A[i_cam, 1, 1] = A_entries[i_cam, 1, 1]
+            A[i_cam, 1, 2] = A_entries[i_cam, 1, 2]
+            A[i_cam, 2, 2] = A_entries[i_cam, 2, 2]
         
     # model
     joint_order = args['model']['joint_order'] # list
@@ -85,7 +94,7 @@ def initialize_x(args,
         for marker_index in range(nMarkers):
             marker_name = joint_marker_order[marker_index]
             string_split = marker_name.split('_')
-            if (string_split[1] == 'spine'):
+            if string_split[1] == 'spine':
                 calculate_3d_point = 1
             elif (string_split[1] == 'tail'):
                 calculate_3d_point = 2

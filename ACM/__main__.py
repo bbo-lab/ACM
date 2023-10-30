@@ -32,7 +32,7 @@ def main():
     elif args.makepose:
         config_path = input_path+'/../..'
         sys.path.insert(0,config_path)
-        from . import tools 
+        from ACM import tools 
         print(f'Loading {config_path} ...')
         config = get_config_dict()
         save_dict = np.load(input_path+'/save_dict.npy',allow_pickle=True).item()
@@ -45,8 +45,8 @@ def main():
         savemat(posepath+'.mat', pose)
     else:
         sys.path.insert(0,input_path)
-        from .export import export
-        from .tools import copy_config
+        from ACM.export import export
+        from ACM.tools import copy_config
         print(f'Loading {input_path} ...')
         check(args)
         config = get_config_dict()
@@ -68,10 +68,10 @@ def check(args):
 def track(args):
     import configuration as cfg
 
-    from . import calibration
-    from . import initialization
-    from . import fitting
-    from . import em_run
+    from ACM import calibration
+    from ACM import initialization
+    from ACM import fitting
+    from ACM import em_run
     
     full_pipline = args.calibration==False and args.initialization==False and args.poseinference==False
     
@@ -95,7 +95,7 @@ def track(args):
 def viewer():
     config = get_config_dict()
 
-    from .gui import viewer
+    from ACM.gui import viewer
     viewer.start(config)
 
 def get_config_dict():

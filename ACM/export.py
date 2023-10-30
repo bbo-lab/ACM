@@ -94,6 +94,7 @@ def export(result_path):
     data_dict['R'] = R
     data_dict['index_frame_start'] = cfg.index_frame_start
     data_dict['origin'] = np.load(file_origin_coord,allow_pickle=True).item()
+    data_dict['folder_ccv'] = cfg.folder_video
     
     # save
     np.savez(folder_save+'/motiondata.npz', data_dict)

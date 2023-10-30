@@ -77,7 +77,7 @@ class Viewer(QMainWindow):
                                      self.get_config()['scale_factor'])
 
         self.results = os.listdir(os.path.join(self.get_config()['folder_project'], 'results'))
-        self.results.append('')
+        self.results.insert(0, '')
 
         self.frames = np.asarray(list(range(max([len(vr) for vr in self.vidreader]))))
 
@@ -98,7 +98,7 @@ class Viewer(QMainWindow):
         if resultidx is None:
             resultidx = self.resultidx
 
-        if resultidx + 1 < len(self.results):
+        if resultidx < len(self.results) and resultidx>0:
             print(self.get_config()['folder_project'])
             print(self.results[resultidx])
             resultpath = os.path.join(self.get_config()['folder_project'], 'results', self.results[resultidx])
@@ -143,7 +143,7 @@ class Viewer(QMainWindow):
 
             return pose, model, frames
         else:
-            raise
+            print("Result not found")
 
     def get_vidreader(self, vididx):
         return self.vidreader[vididx]
@@ -373,7 +373,7 @@ class Viewer(QMainWindow):
                     self.plot_components["manual"].append(
                         self.ax.plot(labels_man[frameidx][k][camidx, 0], labels_man[frameidx][k][camidx, 1], 'g+')[0])
 
-        if "joints" in actions:
+        if "joints" in actions and resultidx>0:
             # Calculate and plot joint positions
             try:
                 pose, model, res_frames = self.get_result(resultidx)

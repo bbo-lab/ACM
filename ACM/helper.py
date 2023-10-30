@@ -52,7 +52,15 @@ def get_calibration(file_origin_coord, file_calibration,
 
     calibration_torch = dict()
 #     calibration_torch['nCameras'] = int(nCameras)
-    calibration_torch['A_fit'] = torch.from_numpy(A)
+    if len(A.shape) == 2:  # Old style calibration
+        calibration_torch['A_fit'] = torch.from_numpy(A)
+    else:
+        calibration_torch['A_fit'] = torch.from_numpy(np.array([
+            A[:, 0, 0],
+            A[:, 0, 2],
+            A[:, 1, 1],
+            A[:, 1, 2],
+        ]).T)
     calibration_torch['k_fit'] = torch.from_numpy(k)
     calibration_torch['rX1_fit'] = torch.from_numpy(rX1)
     calibration_torch['RX1_fit'] = torch.from_numpy(RX1)
