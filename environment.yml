@@ -14,3 +14,4 @@ dependencies:
     - argparse
     - pyqt5
     - bbo-ccvtools
+    - bbo-acm

@@ -79,7 +79,10 @@ class Viewer(QMainWindow):
         self.results = os.listdir(os.path.join(self.get_config()['folder_project'], 'results'))
         self.results.insert(0, '')
 
-        self.frames = np.asarray(list(range(max([len(vr) for vr in self.vidreader]))))
+        try:
+            self.frames = np.asarray(list(range(max([vr.count_frames() for vr in self.vidreader]))))
+        except AttributeError:
+            self.frames = np.asarray(list(range(max([len(vr) for vr in self.vidreader]))))
 
         self.make_menu()
         self.make_gui()
